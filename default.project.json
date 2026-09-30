@@ -3,22 +3,35 @@
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
+      "$ignoreUnknownInstances": true,
       "Shared": {
         "$path": "src/shared"
       }
     },
+    "ReplicatedFirst": {
+      "$ignoreUnknownInstances": true,
+      "IronfrontLoading": {
+        "$path": "src/first"
+      }
+    },
     "ServerScriptService": {
+      "$ignoreUnknownInstances": true,
       "Server": {
         "$path": "src/server"
       }
     },
+    "ServerStorage": {
+      "$ignoreUnknownInstances": true
+    },
     "StarterPlayer": {
+      "$ignoreUnknownInstances": true,
       "$properties": {
         "CameraMaxZoomDistance": 40,
         "CharacterWalkSpeed": 16,
         "CharacterJumpPower": 45
       },
       "StarterPlayerScripts": {
+        "$ignoreUnknownInstances": true,
         "Client": {
           "$path": "src/client"
         }
@@ -28,15 +41,18 @@
       }
     },
     "Players": {
+      "$ignoreUnknownInstances": true,
       "$properties": {
         "CharacterAutoLoads": false,
         "RespawnTime": 6
       }
     },
     "Teams": {
+      "$ignoreUnknownInstances": true,
       "$className": "Teams"
     },
     "Workspace": {
+      "$ignoreUnknownInstances": true,
       "$properties": {
         "StreamingEnabled": true,
         "StreamingTargetRadius": 768,
@@ -48,6 +64,7 @@
       }
     },
     "Lighting": {
+      "$ignoreUnknownInstances": true,
       "$properties": {
         "Technology": {
           "Enum": 4
@@ -123,6 +140,12 @@
           ]
         }
       }
+    },
+    "StarterGui": {
+      "$ignoreUnknownInstances": true
+    },
+    "StarterPack": {
+      "$ignoreUnknownInstances": true
     }
   }
 }

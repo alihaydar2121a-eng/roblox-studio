@@ -95,7 +95,11 @@ The target is a stable 24-player server; 80 players will only be claimed after l
 
 ## Setup: Rojo → Roblox Studio
 
-1. **Install Rojo 7.4.x**
+> **Day to day (Windows):** clone once, then double-click `Sync-Ironfront.cmd`. It pulls new
+> commits safely and starts Rojo. `Watch-Ironfront.cmd` pulls updates automatically. There are no
+> more ZIP downloads. Full guide: [docs/WORKFLOW.md](docs/WORKFLOW.md).
+
+1. **Install Rojo 7.7.0**
    * CLI: `aftman install` in this repo (uses `aftman.toml`), or download it from
      <https://github.com/rojo-rbx/rojo/releases>.
    * Studio sync plugin: `rojo plugin install`.
@@ -106,7 +110,7 @@ The target is a stable 24-player server; 80 players will only be claimed after l
 3. **Game settings** (the place must be saved to Roblox for some of these):
    * *Avatar* → **Avatar Type: R6**
    * *Places* → **Max Players: 24**
-4. **Sync:** run `rojo serve` in the repo, then *Rojo* plugin → **Connect**. Code, lighting effects and
+4. **Sync:** run `Sync-Ironfront.cmd` (or `rojo serve`) in the repo, then *Rojo* plugin → **Connect**. Code, lighting effects and
    Workspace streaming settings sync in.
 5. **Bake the map** (Edit mode): toolbar **Ironfront → Bake Map**. Wait for
    `[MapBuilder] done: … parts` in Output.

@@ -46,3 +46,12 @@ mkdir -p build
 "${T}rojo" build default.project.json -o build/OperationIronfront.rbxlx
 "${T}rojo" build plugin.project.json -o build/IronfrontTools.rbxmx
 echo "Built build/OperationIronfront.rbxlx and build/IronfrontTools.rbxmx"
+
+# Windows sync scripts (Sync-/Watch-Ironfront.ps1) against a throwaway local remote.
+PWSH_BIN=${PWSH:-$(command -v pwsh || true)}
+if [ -n "$PWSH_BIN" ]; then
+  echo "== Git + Rojo sync workflow (PowerShell)"
+  PATH="${T%/}:$PATH" PWSH="$PWSH_BIN" tests/workflow_sync.sh | tail -1
+else
+  echo "== Git + Rojo sync workflow: skipped (pwsh not installed)"
+fi
