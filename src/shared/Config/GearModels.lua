@@ -34,15 +34,18 @@ GearModels.Materials = {
 }
 
 ---------------------------------------------------------------- Ashford Coalition
--- Olive rounded helmet with cover and goggles, plate carrier with triple mag
--- pouches, rucksack with bedroll, tan gloves, brown boots, olive/tan camo.
+-- Premium kit: assets/premium/characters/Ashford (hand-modelled in Blender,
+-- baked PBR atlases). The primitives below are the fallback silhouette; the
+-- palette matches the premium look (Ashford Woodland camo, ranger-green plate
+-- carrier, coyote gloves and boots) and recolours untextured imports.
 GearModels.Alpha = {
-	Uniform = { Torso = { 88, 96, 62 }, Arms = { 88, 96, 62 }, Legs = { 76, 84, 56 } },
+	Premium = "assets/premium/characters/Ashford/Ashford.json",
+	Uniform = { Torso = { 92, 99, 66 }, Arms = { 92, 99, 66 }, Legs = { 86, 93, 62 } },
 	Palette = {
-		helmet = { 84, 92, 60 }, helmetDark = { 60, 66, 44 }, vest = { 104, 108, 76 }, plate = { 94, 100, 68 },
-		pouch = { 112, 114, 80 }, strap = { 62, 66, 46 }, pack = { 92, 96, 64 }, glove = { 150, 132, 96 },
-		boot = { 88, 64, 44 }, sole = { 30, 28, 26 }, knee = { 64, 70, 48 }, lens = { 60, 80, 70 },
-		metal = { 50, 52, 50 }, camoA = { 66, 74, 46 }, camoB = { 134, 120, 86 }, band = { 214, 190, 90 }, cloth = { 70, 78, 50 },
+		helmet = { 82, 88, 62 }, helmetDark = { 40, 42, 38 }, vest = { 78, 84, 58 }, plate = { 81, 87, 60 },
+		pouch = { 85, 91, 63 }, strap = { 60, 64, 46 }, pack = { 82, 88, 60 }, glove = { 146, 124, 90 },
+		boot = { 136, 112, 81 }, sole = { 34, 32, 30 }, knee = { 62, 67, 48 }, lens = { 70, 82, 80 },
+		metal = { 58, 60, 62 }, camoA = { 74, 82, 52 }, camoB = { 140, 126, 92 }, band = { 190, 172, 120 }, cloth = { 92, 99, 66 },
 	},
 	Head = {
 		ell({ 0, 0.44, 0.04 }, { 1.46, 1.02, 1.52 }, "helmet"), -- shell

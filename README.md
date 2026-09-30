@@ -26,6 +26,7 @@ primitives with built-in materials, and audio IDs are empty placeholders
 | Cinematic lighting persisted in Rojo; Studio bake plugin; runtime fallback | ✅ |
 | **Milestone 2 — soldiers, weapons, animation** | ✅ Implemented and verified offline. Needs a Studio pass (see the checklist) |
 | Faction kits, 5 weapons (Blender FBX/GLB + in-game fallback), procedural R6 animation, first-person viewmodel with aim-down-sights | ✅, see [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) |
+| **Premium art pass** (hand-modelled Blender assets, baked PBR atlases) | 🟡 First two assets delivered for review: **IR-7 Carbine** and the **Ashford Coalition** soldier kit, see [docs/PREMIUM_ASSETS.md](docs/PREMIUM_ASSETS.md). AR-12, SG-4, SR-9, PX-6 and the Varn kit follow once these are approved |
 | Phase 1 gameplay: teams, spawning, capture points, tickets, HUD | ✅ |
 | SFX/VFX, full UI and classes, vehicles and destruction | ⏳ Milestones 3–5, see [docs/ROADMAP.md](docs/ROADMAP.md) |
 
@@ -34,7 +35,14 @@ primitives with built-in materials, and audio IDs are empty placeholders
 > has been run inside Roblox Studio by the author yet. Please work through
 > [docs/STUDIO_VALIDATION.md](docs/STUDIO_VALIDATION.md).
 
-| Soldiers (Blender render) | Weapons (Blender render) |
+| Ashford Coalition kit (premium, baked textures) | IR-7 Carbine (premium, baked textures) |
+|---|---|
+| ![](assets/premium/characters/Ashford/renders/Ashford_threequarter.jpg) | ![](assets/premium/weapons/IR7/renders/IR7_threequarter.jpg) |
+
+The remaining weapons and the Varn kit still use the Milestone 2 meshes (below) until they get the
+premium treatment.
+
+| Milestone 2 soldiers (Blender render) | Milestone 2 weapons (Blender render) |
 |---|---|
 | ![](assets/previews/soldiers_front.png) | ![](assets/previews/weapons_lineup.png) |
 

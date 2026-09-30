@@ -22,28 +22,6 @@
       "name": "KR-20 Warden",
       "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.AR"
     },
-    "CB": {
-      "file": "assets/export/weapons/CB.fbx",
-      "objects": [
-        "CB_body",
-        "CB_mag",
-        "CB_optic",
-        "Origin"
-      ],
-      "textures": {
-        "Color": "assets/export/weapons/CB_Color.png",
-        "Roughness": "assets/export/weapons/CB_Roughness.png",
-        "Metalness": "assets/export/weapons/CB_Metalness.png"
-      },
-      "triangles": 3916,
-      "size_studs": [
-        0.262,
-        1.225,
-        2.959
-      ],
-      "name": "KC-9 Talon",
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.CB"
-    },
     "LMG": {
       "file": "assets/export/weapons/LMG.fbx",
       "objects": [
@@ -111,123 +89,6 @@
     }
   },
   "gear": {
-    "Alpha_Head": {
-      "file": "assets/export/gear/Alpha_Head.fbx",
-      "objects": [
-        "Alpha_Head_body",
-        "Alpha_Head_v_goggles",
-        "Alpha_Head_v_headset",
-        "Origin"
-      ],
-      "textures": {
-        "Color": "assets/export/gear/Alpha_Head_Color.png",
-        "Roughness": "assets/export/gear/Alpha_Head_Roughness.png",
-        "Metalness": "assets/export/gear/Alpha_Head_Metalness.png"
-      },
-      "triangles": 2572,
-      "size_studs": [
-        1.57,
-        1.46,
-        1.61
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Head"
-    },
-    "Alpha_Torso": {
-      "file": "assets/export/gear/Alpha_Torso.fbx",
-      "objects": [
-        "Alpha_Torso_body",
-        "Alpha_Torso_v_bedroll",
-        "Origin"
-      ],
-      "textures": {
-        "Color": "assets/export/gear/Alpha_Torso_Color.png",
-        "Roughness": "assets/export/gear/Alpha_Torso_Roughness.png",
-        "Metalness": "assets/export/gear/Alpha_Torso_Metalness.png"
-      },
-      "triangles": 5280,
-      "size_studs": [
-        1.86,
-        2.25,
-        1.992
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Torso"
-    },
-    "Alpha_Arm": {
-      "file": "assets/export/gear/Alpha_Arm.fbx",
-      "objects": [
-        "Alpha_Arm_body",
-        "Origin"
-      ],
-      "textures": {
-        "Color": "assets/export/gear/Alpha_Arm_Color.png",
-        "Roughness": "assets/export/gear/Alpha_Arm_Roughness.png",
-        "Metalness": "assets/export/gear/Alpha_Arm_Metalness.png"
-      },
-      "triangles": 1188,
-      "size_studs": [
-        0.84,
-        1.94,
-        0.71
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm"
-    },
-    "Alpha_Arm_L": {
-      "file": "assets/export/gear/Alpha_Arm_L.fbx",
-      "objects": [
-        "Alpha_Arm_L_body",
-        "Origin"
-      ],
-      "textures": {
-        "Color": "assets/export/gear/Alpha_Arm_L_Color.png",
-        "Roughness": "assets/export/gear/Alpha_Arm_L_Roughness.png",
-        "Metalness": "assets/export/gear/Alpha_Arm_L_Metalness.png"
-      },
-      "triangles": 1188,
-      "size_studs": [
-        0.84,
-        1.94,
-        0.71
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm_L"
-    },
-    "Alpha_Leg": {
-      "file": "assets/export/gear/Alpha_Leg.fbx",
-      "objects": [
-        "Alpha_Leg_body",
-        "Origin"
-      ],
-      "textures": {
-        "Color": "assets/export/gear/Alpha_Leg_Color.png",
-        "Roughness": "assets/export/gear/Alpha_Leg_Roughness.png",
-        "Metalness": "assets/export/gear/Alpha_Leg_Metalness.png"
-      },
-      "triangles": 2388,
-      "size_studs": [
-        0.91,
-        2.03,
-        1.146
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg"
-    },
-    "Alpha_Leg_L": {
-      "file": "assets/export/gear/Alpha_Leg_L.fbx",
-      "objects": [
-        "Alpha_Leg_L_body",
-        "Origin"
-      ],
-      "textures": {
-        "Color": "assets/export/gear/Alpha_Leg_L_Color.png",
-        "Roughness": "assets/export/gear/Alpha_Leg_L_Roughness.png",
-        "Metalness": "assets/export/gear/Alpha_Leg_L_Metalness.png"
-      },
-      "triangles": 2388,
-      "size_studs": [
-        0.91,
-        2.03,
-        1.146
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg_L"
-    },
     "Bravo_Head": {
       "file": "assets/export/gear/Bravo_Head.fbx",
       "objects": [
@@ -348,5 +209,9 @@
   },
   "units": "1 unit = 1 stud",
   "axes": "Y up, -Z forward (Roblox)",
-  "texture_size": 1024
+  "texture_size": 1024,
+  "premium": {
+    "CB": "assets/premium/weapons/IR7/IR7.json",
+    "Alpha": "assets/premium/characters/Ashford/Ashford.json"
+  }
 }

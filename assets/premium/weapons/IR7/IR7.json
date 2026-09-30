@@ -1,0 +1,69 @@
+{
+  "name": "IR-7 Carbine",
+  "id": "CB",
+  "model": "IR7",
+  "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.CB",
+  "files": {
+    "blend": "assets/premium/weapons/IR7/IR7.blend",
+    "fbx": "assets/premium/weapons/IR7/IR7.fbx",
+    "glb": "assets/premium/weapons/IR7/IR7.glb"
+  },
+  "textures": {
+    "Color": "assets/premium/weapons/IR7/textures/IR7_Color.png",
+    "Roughness": "assets/premium/weapons/IR7/textures/IR7_Roughness.png",
+    "Metalness": "assets/premium/weapons/IR7/textures/IR7_Metalness.png",
+    "Normal": "assets/premium/weapons/IR7/textures/IR7_Normal.png"
+  },
+  "objects": {
+    "IR7_accent": 5700,
+    "IR7_dark": 1252,
+    "IR7_glass_optic": 184,
+    "IR7_gunmetal": 3298,
+    "IR7_metal": 5924,
+    "IR7_olive_mag": 2756,
+    "IR7_polymer": 5012,
+    "IR7_receiver": 5466,
+    "IR7_receiver_optic": 3622,
+    "IR7_rubber": 796
+  },
+  "triangles": 34010,
+  "size_studs_xyz": [
+    0.325,
+    1.238,
+    2.98
+  ],
+  "points_roblox": {
+    "Support": [
+      0.0,
+      0.25,
+      -1.06
+    ],
+    "Muzzle": [
+      0.0,
+      0.42,
+      -1.95
+    ],
+    "Sight": [
+      0.0,
+      0.705,
+      0.3
+    ],
+    "Stock": [
+      0.0,
+      0.34,
+      1.03
+    ],
+    "Audio": [
+      0.0,
+      0.42,
+      -0.3
+    ]
+  },
+  "atlas": {
+    "size": 1024,
+    "usage": 0.59,
+    "overlap": 0.0
+  },
+  "units": "1 unit = 1 stud",
+  "axes": "Y up, -Z forward (Roblox); pivot = right-hand grip (object 'Origin')"
+}

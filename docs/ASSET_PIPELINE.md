@@ -1,5 +1,10 @@
 # Soldiers, weapons & animation — asset pipeline
 
+> **Premium assets:** the IR-7 Carbine (slot `CB`) and the Ashford Coalition kit (team `Alpha`)
+> are now hand-modelled in Blender with baked PBR textures. They have their own build and import
+> steps in [PREMIUM_ASSETS.md](PREMIUM_ASSETS.md). The primitive pipeline below still covers the
+> other weapons and the Varn kit, and it skips anything marked `Premium` in the specs.
+
 ```
 scripts/blender/ironfront/        modelling library (Blender 4.2 bpy)
   geo.py      lofts, lathes, extrusions, shells, straps, booleans, bevels, weighted normals

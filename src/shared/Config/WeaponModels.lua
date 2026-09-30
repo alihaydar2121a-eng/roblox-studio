@@ -34,6 +34,7 @@ end
 WeaponModels.Materials = {
 	body = "SmoothPlastic", metal = "Metal", accent = "SmoothPlastic", rail = "Metal", dark = "SmoothPlastic",
 	glass = "Glass", rubber = "Rubber", wood = "Wood", mag = "Metal",
+	receiver = "Metal", gunmetal = "Metal", polymer = "SmoothPlastic", olive = "SmoothPlastic",
 }
 
 -- KR-20 "Warden" infantry rifle: olive polymer furniture, tan handguard, 3× optic.
@@ -88,44 +89,50 @@ WeaponModels.AR = {
 	},
 }
 
--- KC-9 "Talon" carbine: sand furniture, short barrel, skeleton stock, reflex sight.
+-- IR-7 Carbine (premium asset: assets/premium/weapons/IR7). Black anodised
+-- upper, tungsten-grey lower, coyote handguard and stock, olive magazine,
+-- HX-2 micro red dot. The primitives below are only the fallback silhouette;
+-- Points match the Blender model (scripts/blender/premium/assets/ir7.py).
 WeaponModels.CB = {
+	Premium = "assets/premium/weapons/IR7/IR7.json",
 	Palette = {
-		body = { 156, 138, 104 }, metal = { 40, 42, 44 }, accent = { 120, 104, 76 }, rail = { 30, 31, 33 },
-		dark = { 20, 20, 22 }, glass = { 150, 60, 50 }, rubber = { 28, 28, 30 }, mag = { 44, 46, 48 },
+		receiver = { 38, 39, 42 }, gunmetal = { 68, 70, 74 }, accent = { 152, 128, 93 }, polymer = { 144, 121, 89 },
+		dark = { 32, 32, 34 }, metal = { 70, 72, 76 }, rubber = { 27, 27, 28 }, olive = { 86, 92, 62 },
+		glass = { 120, 150, 140 },
 	},
 	Points = {
-		Support = { 0, 0.3, -1.08 }, Muzzle = { 0, 0.44, -1.98 }, Sight = { 0, 0.71, 0.3 },
-		Stock = { 0, 0.38, 0.98 }, Audio = { 0, 0.44, -0.3 },
+		Support = { 0, 0.25, -1.06 }, Muzzle = { 0, 0.42, -1.95 }, Sight = { 0, 0.705, 0.3 },
+		Stock = { 0, 0.34, 1.03 }, Audio = { 0, 0.42, -0.3 },
 	},
 	Parts = {
-		box({ 0, 0.25, -0.2 }, { 0.22, 0.24, 0.9 }, "body"),
-		box({ 0, 0.44, -0.3 }, { 0.24, 0.18, 1.0 }, "metal"),
-		box({ 0, 0.555, -0.35 }, { 0.15, 0.045, 0.95 }, "rail"),
-		box({ 0.125, 0.44, -0.25 }, { 0.02, 0.09, 0.22 }, "dark"),
-		box({ 0, 0.42, -1.12 }, { 0.26, 0.26, 0.62 }, "body"), -- short handguard
-		box({ 0, 0.42, -1.12 }, { 0.27, 0.06, 0.5 }, "dark"),
-		cyl({ 0, 0.44, -1.62 }, 0.085, 0.6, "metal"),
-		cyl({ 0, 0.44, -1.9 }, 0.13, 0.16, "metal"), -- flash hider
-		box({ 0, 0.6, -1.36 }, { 0.05, 0.12, 0.05 }, "metal"),
-		-- Reflex sight
-		box({ 0, 0.6, -0.25 }, { 0.12, 0.05, 0.22 }, "rail", nil, "optic"),
-		box({ 0, 0.7, -0.3 }, { 0.14, 0.14, 0.04 }, "metal", nil, "optic"),
-		box({ 0, 0.7, -0.3 }, { 0.1, 0.1, 0.02 }, "glass", nil, "optic"),
-		box({ 0.065, 0.66, -0.25 }, { 0.02, 0.1, 0.16 }, "metal", nil, "optic"),
-		box({ -0.065, 0.66, -0.25 }, { 0.02, 0.1, 0.16 }, "metal", nil, "optic"),
-		-- Grip, trigger, magazine
-		box({ 0, -0.12, 0.05 }, { 0.17, 0.44, 0.2 }, "body", { -15, 0, 0 }),
-		box({ 0, 0.02, -0.2 }, { 0.05, 0.05, 0.28 }, "metal"),
-		box({ 0, 0.1, -0.45 }, { 0.24, 0.12, 0.3 }, "body"),
-		box({ 0, -0.14, -0.49 }, { 0.19, 0.56, 0.26 }, "mag", { 14, 0, 0 }, "mag"),
-		box({ 0, -0.41, -0.56 }, { 0.2, 0.05, 0.28 }, "dark", { 14, 0, 0 }, "mag"),
-		box({ 0, 0.24, -1.08 }, { 0.2, 0.12, 0.22 }, "accent"), -- hand stop
-		-- Skeleton stock
-		box({ 0, 0.46, 0.52 }, { 0.08, 0.06, 0.64 }, "metal"),
-		box({ 0, 0.28, 0.55 }, { 0.08, 0.06, 0.55 }, "metal", { 18, 0, 0 }),
-		box({ 0, 0.36, 0.86 }, { 0.2, 0.4, 0.08 }, "body"),
-		box({ 0, 0.36, 0.93 }, { 0.2, 0.42, 0.05 }, "rubber"),
+		box({ 0, 0.425, -0.18 }, { 0.184, 0.19, 0.93 }, "receiver"), -- upper receiver
+		box({ 0, 0.545, -0.205 }, { 0.124, 0.06, 0.86 }, "receiver"), -- top rail
+		box({ 0.093, 0.425, -0.225 }, { 0.01, 0.078, 0.23 }, "dark"), -- ejection port
+		box({ 0, 0.512, 0.297 }, { 0.2, 0.033, 0.065 }, "receiver"), -- charging handle
+		box({ 0, 0.2375, -0.19 }, { 0.168, 0.195, 0.907 }, "gunmetal"), -- lower receiver
+		box({ 0, 0.083, -0.482 }, { 0.19, 0.114, 0.385 }, "gunmetal"), -- flared magazine well
+		box({ 0, 0.03, -0.21 }, { 0.05, 0.022, 0.19 }, "gunmetal"), -- trigger guard
+		box({ 0, 0.1, -0.18 }, { 0.025, 0.09, 0.025 }, "metal"), -- trigger
+		box({ 0, 0.403, -1.072 }, { 0.208, 0.234, 0.855 }, "accent"), -- handguard
+		box({ 0, 0.545, -1.06 }, { 0.124, 0.06, 0.8 }, "accent"), -- handguard rail
+		box({ 0, 0.25, -1.38 }, { 0.068, 0.09, 0.14 }, "dark"), -- hand stop
+		cyl({ 0, 0.42, -1.6 }, 0.072, 0.2, "metal"), -- barrel
+		cyl({ 0, 0.42, -1.789 }, 0.116, 0.322, "metal"), -- 3-port brake
+		box({ 0, 0.595, -1.4 }, { 0.112, 0.04, 0.1 }, "receiver"), -- folded front sight
+		box({ 0, 0.595, 0.165 }, { 0.112, 0.04, 0.1 }, "receiver"), -- folded rear sight
+		-- HX-2 micro red dot
+		box({ 0, 0.618, -0.18 }, { 0.14, 0.094, 0.21 }, "receiver", nil, "optic"),
+		cyl({ 0, 0.705, -0.2 }, 0.13, 0.26, "receiver", nil, "optic"),
+		box({ 0, 0.785, -0.1875 }, { 0.06, 0.06, 0.06 }, "metal", nil, "optic"),
+		cyl({ 0, 0.705, -0.328 }, 0.1, 0.01, "glass", nil, "optic"),
+		-- Grip, magazine, stock
+		box({ 0, -0.08, 0.025 }, { 0.14, 0.47, 0.2 }, "polymer", { -18, 0, 0 }),
+		box({ 0, -0.135, -0.51 }, { 0.116, 0.52, 0.23 }, "olive", { 12, 0, 0 }, "mag"),
+		box({ 0, -0.39, -0.57 }, { 0.13, 0.04, 0.245 }, "olive", { 12, 0, 0 }, "mag"),
+		cyl({ 0, 0.415, 0.59 }, 0.1, 0.58, "receiver"), -- buffer tube
+		box({ 0, 0.45, 0.745 }, { 0.132, 0.2, 0.49 }, "polymer"), -- stock: cheek rest
+		box({ 0, 0.24, 0.87 }, { 0.132, 0.26, 0.23 }, "polymer"), -- stock: heel
+		box({ 0, 0.3415, 1.007 }, { 0.14, 0.437, 0.046 }, "rubber"), -- butt pad
 	},
 }
 

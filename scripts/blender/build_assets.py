@@ -31,6 +31,10 @@ argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:]
 ONLY = set(argv[argv.index("--only") + 1].split(",")) if "--only" in argv else None
 SIZE = int(argv[argv.index("--size") + 1]) if "--size" in argv else 1024
 
+# Superseded by the hand-modelled premium assets (scripts/blender/premium):
+# CB is the IR-7 Carbine, Alpha is the Ashford Coalition kit.
+PREMIUM = {"CB", "Alpha"}
+
 NAMES = {"AR": "KR-20 Warden", "CB": "KC-9 Talon", "LMG": "RG-7 Bulwark", "SR": "LX-3 Longreach", "P11": "P-11 Sidearm"}
 
 
@@ -119,13 +123,15 @@ if ONLY and os.path.exists(manifest_path):
 manifest.update({"units": "1 unit = 1 stud", "axes": "Y up, -Z forward (Roblox)", "texture_size": SIZE})
 
 for wid, builder in weapons.BUILDERS.items():
-    if ONLY and wid not in ONLY:
+    if wid in PREMIUM or (ONLY and wid not in ONLY):
         continue
     studio.reset()
     manifest["weapons"][wid] = build_asset(wid, builder(), "weapons", {
         "name": NAMES[wid], "roblox_path": f"ReplicatedStorage.ImportedAssets.Weapons.{wid}"})
 
 for team in ("Alpha", "Bravo"):
+    if team in PREMIUM:
+        continue
     for piece in soldiers.PIECES:
         asset = f"{team}_{piece}"
         if ONLY and asset not in ONLY:

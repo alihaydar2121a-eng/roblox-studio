@@ -18,6 +18,8 @@ LOADOUT = {"Alpha": {"goggles", "headset", "bedroll"}, "Bravo": {"visor", "anten
 
 
 def load(path, offset=(0, 0, 0), variants=None, rot=None):
+    if not os.path.exists(path):  # premium assets (CB, Alpha) are rendered by scripts/blender/premium
+        return []
     before = set(bpy.data.objects)
     bpy.ops.import_scene.gltf(filepath=path)
     objs = [o for o in bpy.data.objects if o not in before]

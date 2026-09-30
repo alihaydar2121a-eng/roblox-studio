@@ -22,14 +22,14 @@ others.
   - Shift sprint leans forward, lowers the weapon and raises speed and FOV;
   - C (or Ctrl) crouch kneels, slows you down and tightens spread;
   - jump, fall and landing poses play.
-- [ ] **Weapons:** the KR-20 (default), KC-9, MG-44, SR-3 and P-11 (key 2).
+- [ ] **Weapons:** the KR-20 (default), IR-7 Carbine, MG-44, SR-3 and P-11 (key 2).
   - The barrel points forward and the right hand is on the pistol grip.
   - The left hand is under the handguard. R6 arms are rigid, so it may sit short of the foregrip on
     long rifles.
 - [ ] **Equip and switch:** 1 and 2 (or Q) switch with a raise animation, and you can't fire until
       the weapon is up. Other players see your weapon change.
 - [ ] **Aiming:** RMB goes to first person with a smooth move to the sights.
-  - KR-20, KC-9 and MG-44 show a red-dot reticle and hide the optic model.
+  - KR-20, IR-7 and MG-44 show a red-dot reticle and hide the optic model.
   - The SR-3 shows the black scope overlay at high zoom.
   - The P-11 aims down its iron sights.
 - [ ] **Firing:** recoil kicks the camera and viewmodel. A flash and tracer come from the muzzle in
@@ -54,6 +54,32 @@ others.
 - [ ] The magazine hides during the reload and the optic hides at full aim.
 - [ ] The first-person arms use the imported sleeves and gloves, and the fists sit on the grip and
       foregrip. Note any wrist twist here: ______.
+
+## Premium assets — IR-7 Carbine and Ashford kit
+Import them as described in [PREMIUM_ASSETS.md](PREMIUM_ASSETS.md), then check:
+- [ ] **Install Assets** prints `IR7 -> ReplicatedStorage.ImportedAssets.Weapons.CB` and the six
+      `Ashford_* -> …Gear.Alpha.*` lines. It shows no `rescaled`, `extent` or `missing part`
+      warnings.
+- [ ] Parts are textured: camo, stipple and edge wear are visible. If the importer did not create a
+      `SurfaceAppearance`, follow step 3 in PREMIUM_ASSETS.md.
+- [ ] **IR-7 third person:**
+  - the grip is in the right hand and the barrel points forward;
+  - the magazine disappears during reloads;
+  - `AssetSource = imported`.
+- [ ] **IR-7 first person:**
+  - the red dot hides at full aim and the reticle is centred;
+  - the muzzle flash comes from the brake;
+  - nothing clips at hip fire.
+- [ ] **Ashford soldier:**
+  - helmet, plate carrier, pack, gloves and boots follow the limbs while walking, sprinting,
+    crouching and reloading;
+  - nothing floats;
+  - arms don't visibly clip the vest;
+  - shots still hit the body.
+- [ ] **Variants:** different players show different mixes of helmet cover, goggles, headset,
+      bedroll and antenna.
+- [ ] **First-person arms:** as Ashford, the viewmodel forearms, cuffs and gloves are the premium
+      meshes, and the hands sit on the grip and handguard.
 
 ## Milestone 1 — map bake & visuals
 - [ ] **Bake:** Ironfront → Bake Map (Edit mode) completes without errors. Output lists

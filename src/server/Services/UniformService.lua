@@ -88,7 +88,8 @@ function UniformService.applyGear(character, teamConfig, player)
 			end
 			if built then
 				sources.imported = true
-				-- Premium body meshes replace the blocky limb; the R6 part stays as the hitbox.
+				-- The premium body mesh replaces the blocky limb; the R6 part stays as the
+				-- hitbox and animation joint. The Head stays visible (face under the helmet).
 				if limb.Part ~= "Head" and anchor:IsA("BasePart") then
 					anchor.Transparency = 1
 				end
