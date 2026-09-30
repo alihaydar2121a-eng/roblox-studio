@@ -116,7 +116,9 @@ Save the place. The Rojo project only maps `ReplicatedStorage.Shared`, so the im
 in the place file. Then play-test with 2+ clients:
 
 * the carbine's weapon model has `AssetSource = imported`;
-* an Ashford character's `Gear` folder has `Source = imported`;
+* an Ashford character's `Gear` folder has `Source = imported`, and the blocky R6 torso, arms and
+  legs are invisible (Transparency 1) under the premium body — they remain the hitboxes;
+* the variant pieces differ between players, and survive a respawn;
 * in first person, the forearms, cuffs and gloves are the premium meshes.
 
 ## How it plugs into the game (no gameplay changes)
