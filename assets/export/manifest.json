@@ -1,307 +1,352 @@
 {
   "weapons": {
     "AR": {
-      "name": "KR-20 Warden",
       "file": "assets/export/weapons/AR.fbx",
       "objects": [
-        "AR_accent",
         "AR_body",
-        "AR_dark",
-        "AR_dark_mag",
-        "AR_dark_optic",
-        "AR_glass_optic",
-        "AR_mag_mag",
-        "AR_metal",
-        "AR_metal_optic",
-        "AR_rail",
-        "AR_rail_optic",
-        "AR_rubber",
+        "AR_mag",
+        "AR_optic",
         "Origin"
       ],
-      "triangles": 3972,
+      "textures": {
+        "Color": "assets/export/weapons/AR_Color.png",
+        "Roughness": "assets/export/weapons/AR_Roughness.png",
+        "Metalness": "assets/export/weapons/AR_Metalness.png"
+      },
+      "triangles": 6438,
       "size_studs": [
-        0.31,
-        1.373,
-        3.88
+        0.305,
+        1.363,
+        3.929
       ],
+      "name": "KR-20 Warden",
       "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.AR"
     },
     "CB": {
-      "name": "KC-9 Talon",
       "file": "assets/export/weapons/CB.fbx",
       "objects": [
-        "CB_accent",
         "CB_body",
-        "CB_dark",
-        "CB_dark_mag",
-        "CB_glass_optic",
-        "CB_mag_mag",
-        "CB_metal",
-        "CB_metal_optic",
-        "CB_rail",
-        "CB_rail_optic",
-        "CB_rubber",
+        "CB_mag",
+        "CB_optic",
         "Origin"
       ],
-      "triangles": 2656,
+      "textures": {
+        "Color": "assets/export/weapons/CB_Color.png",
+        "Roughness": "assets/export/weapons/CB_Roughness.png",
+        "Metalness": "assets/export/weapons/CB_Metalness.png"
+      },
+      "triangles": 3916,
       "size_studs": [
-        0.27,
-        1.235,
-        2.935
+        0.262,
+        1.225,
+        2.959
       ],
+      "name": "KC-9 Talon",
       "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.CB"
     },
     "LMG": {
-      "name": "MG-44 Bulwark",
       "file": "assets/export/weapons/LMG.fbx",
       "objects": [
-        "LMG_accent",
         "LMG_body",
-        "LMG_dark",
-        "LMG_dark_mag",
-        "LMG_glass_optic",
-        "LMG_mag_mag",
-        "LMG_metal",
-        "LMG_metal_optic",
-        "LMG_rail",
-        "LMG_rubber",
+        "LMG_mag",
+        "LMG_optic",
         "Origin"
       ],
-      "triangles": 3356,
+      "textures": {
+        "Color": "assets/export/weapons/LMG_Color.png",
+        "Roughness": "assets/export/weapons/LMG_Roughness.png",
+        "Metalness": "assets/export/weapons/LMG_Metalness.png"
+      },
+      "triangles": 6326,
       "size_studs": [
-        0.47,
-        1.267,
-        4.38
+        0.652,
+        1.206,
+        4.42
       ],
+      "name": "RG-7 Bulwark",
       "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.LMG"
     },
+    "SR": {
+      "file": "assets/export/weapons/SR.fbx",
+      "objects": [
+        "Origin",
+        "SR_body",
+        "SR_mag",
+        "SR_optic"
+      ],
+      "textures": {
+        "Color": "assets/export/weapons/SR_Color.png",
+        "Roughness": "assets/export/weapons/SR_Roughness.png",
+        "Metalness": "assets/export/weapons/SR_Metalness.png"
+      },
+      "triangles": 3838,
+      "size_studs": [
+        0.44,
+        1.13,
+        4.53
+      ],
+      "name": "LX-3 Longreach",
+      "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.SR"
+    },
     "P11": {
-      "name": "P-11 Marshal",
       "file": "assets/export/weapons/P11.fbx",
       "objects": [
         "Origin",
         "P11_body",
-        "P11_dark",
-        "P11_mag_mag",
-        "P11_metal"
+        "P11_mag"
       ],
-      "triangles": 1112,
+      "textures": {
+        "Color": "assets/export/weapons/P11_Color.png",
+        "Roughness": "assets/export/weapons/P11_Roughness.png",
+        "Metalness": "assets/export/weapons/P11_Metalness.png"
+      },
+      "triangles": 1716,
       "size_studs": [
-        0.173,
-        0.806,
-        0.88
+        0.16,
+        0.698,
+        0.913
       ],
+      "name": "P-11 Sidearm",
       "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.P11"
-    },
-    "SR": {
-      "name": "SR-3 Kestrel",
-      "file": "assets/export/weapons/SR.fbx",
-      "objects": [
-        "Origin",
-        "SR_accent",
-        "SR_body",
-        "SR_dark_optic",
-        "SR_glass_optic",
-        "SR_mag_mag",
-        "SR_metal",
-        "SR_metal_optic",
-        "SR_rubber"
-      ],
-      "triangles": 2496,
-      "size_studs": [
-        0.454,
-        1.364,
-        4.5
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.SR"
     }
   },
   "gear": {
     "Alpha_Head": {
       "file": "assets/export/gear/Alpha_Head.fbx",
       "objects": [
-        "Alpha_Head_camoA_v_cover",
-        "Alpha_Head_helmet",
-        "Alpha_Head_helmetDark",
-        "Alpha_Head_helmetDark_v_headset",
-        "Alpha_Head_lens_v_goggles",
-        "Alpha_Head_metal",
-        "Alpha_Head_strap",
-        "Alpha_Head_strap_v_goggles",
+        "Alpha_Head_body",
+        "Alpha_Head_v_goggles",
+        "Alpha_Head_v_headset",
         "Origin"
       ],
-      "triangles": 1704,
+      "textures": {
+        "Color": "assets/export/gear/Alpha_Head_Color.png",
+        "Roughness": "assets/export/gear/Alpha_Head_Roughness.png",
+        "Metalness": "assets/export/gear/Alpha_Head_Metalness.png"
+      },
+      "triangles": 2572,
+      "size_studs": [
+        1.57,
+        1.46,
+        1.61
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Head"
     },
     "Alpha_Torso": {
       "file": "assets/export/gear/Alpha_Torso.fbx",
       "objects": [
-        "Alpha_Torso_band",
-        "Alpha_Torso_camoA",
-        "Alpha_Torso_camoB",
-        "Alpha_Torso_camoB_v_bedroll",
-        "Alpha_Torso_metal",
-        "Alpha_Torso_pack",
-        "Alpha_Torso_plate",
-        "Alpha_Torso_pouch",
-        "Alpha_Torso_strap",
-        "Alpha_Torso_vest",
+        "Alpha_Torso_body",
+        "Alpha_Torso_v_bedroll",
         "Origin"
       ],
-      "triangles": 2732,
+      "textures": {
+        "Color": "assets/export/gear/Alpha_Torso_Color.png",
+        "Roughness": "assets/export/gear/Alpha_Torso_Roughness.png",
+        "Metalness": "assets/export/gear/Alpha_Torso_Metalness.png"
+      },
+      "triangles": 5280,
+      "size_studs": [
+        1.86,
+        2.25,
+        1.992
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Torso"
     },
     "Alpha_Arm": {
       "file": "assets/export/gear/Alpha_Arm.fbx",
       "objects": [
-        "Alpha_Arm_band",
-        "Alpha_Arm_camoB",
-        "Alpha_Arm_cloth",
-        "Alpha_Arm_glove",
-        "Alpha_Arm_helmetDark",
+        "Alpha_Arm_body",
         "Origin"
       ],
-      "triangles": 648,
+      "textures": {
+        "Color": "assets/export/gear/Alpha_Arm_Color.png",
+        "Roughness": "assets/export/gear/Alpha_Arm_Roughness.png",
+        "Metalness": "assets/export/gear/Alpha_Arm_Metalness.png"
+      },
+      "triangles": 1188,
+      "size_studs": [
+        0.84,
+        1.94,
+        0.71
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm"
     },
     "Alpha_Arm_L": {
       "file": "assets/export/gear/Alpha_Arm_L.fbx",
       "objects": [
-        "Alpha_Arm_L_band",
-        "Alpha_Arm_L_camoB",
-        "Alpha_Arm_L_cloth",
-        "Alpha_Arm_L_glove",
-        "Alpha_Arm_L_helmetDark",
+        "Alpha_Arm_L_body",
         "Origin"
       ],
-      "triangles": 648,
+      "textures": {
+        "Color": "assets/export/gear/Alpha_Arm_L_Color.png",
+        "Roughness": "assets/export/gear/Alpha_Arm_L_Roughness.png",
+        "Metalness": "assets/export/gear/Alpha_Arm_L_Metalness.png"
+      },
+      "triangles": 1188,
+      "size_studs": [
+        0.84,
+        1.94,
+        0.71
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm_L"
     },
     "Alpha_Leg": {
       "file": "assets/export/gear/Alpha_Leg.fbx",
       "objects": [
-        "Alpha_Leg_boot",
-        "Alpha_Leg_camoA",
-        "Alpha_Leg_camoB",
-        "Alpha_Leg_knee",
-        "Alpha_Leg_pouch",
-        "Alpha_Leg_sole",
-        "Alpha_Leg_strap",
+        "Alpha_Leg_body",
         "Origin"
       ],
-      "triangles": 864,
+      "textures": {
+        "Color": "assets/export/gear/Alpha_Leg_Color.png",
+        "Roughness": "assets/export/gear/Alpha_Leg_Roughness.png",
+        "Metalness": "assets/export/gear/Alpha_Leg_Metalness.png"
+      },
+      "triangles": 2388,
+      "size_studs": [
+        0.91,
+        2.03,
+        1.146
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg"
     },
     "Alpha_Leg_L": {
       "file": "assets/export/gear/Alpha_Leg_L.fbx",
       "objects": [
-        "Alpha_Leg_L_boot",
-        "Alpha_Leg_L_camoA",
-        "Alpha_Leg_L_camoB",
-        "Alpha_Leg_L_knee",
-        "Alpha_Leg_L_pouch",
-        "Alpha_Leg_L_sole",
-        "Alpha_Leg_L_strap",
+        "Alpha_Leg_L_body",
         "Origin"
       ],
-      "triangles": 864,
+      "textures": {
+        "Color": "assets/export/gear/Alpha_Leg_L_Color.png",
+        "Roughness": "assets/export/gear/Alpha_Leg_L_Roughness.png",
+        "Metalness": "assets/export/gear/Alpha_Leg_L_Metalness.png"
+      },
+      "triangles": 2388,
+      "size_studs": [
+        0.91,
+        2.03,
+        1.146
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg_L"
     },
     "Bravo_Head": {
       "file": "assets/export/gear/Bravo_Head.fbx",
       "objects": [
-        "Bravo_Head_band",
-        "Bravo_Head_helmet",
-        "Bravo_Head_helmetDark",
-        "Bravo_Head_lens_v_visor",
-        "Bravo_Head_metal_v_mask",
-        "Bravo_Head_strap_v_mask",
+        "Bravo_Head_body",
+        "Bravo_Head_v_mask",
+        "Bravo_Head_v_visor",
         "Origin"
       ],
-      "triangles": 1268,
+      "textures": {
+        "Color": "assets/export/gear/Bravo_Head_Color.png",
+        "Roughness": "assets/export/gear/Bravo_Head_Roughness.png",
+        "Metalness": "assets/export/gear/Bravo_Head_Metalness.png"
+      },
+      "triangles": 1580,
+      "size_studs": [
+        1.54,
+        1.361,
+        1.673
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Bravo.Head"
     },
     "Bravo_Torso": {
       "file": "assets/export/gear/Bravo_Torso.fbx",
       "objects": [
-        "Bravo_Torso_band",
-        "Bravo_Torso_camoA",
-        "Bravo_Torso_camoB",
-        "Bravo_Torso_helmetDark",
-        "Bravo_Torso_metal_v_antenna",
-        "Bravo_Torso_pack",
-        "Bravo_Torso_plate",
-        "Bravo_Torso_pouch",
-        "Bravo_Torso_strap",
-        "Bravo_Torso_vest",
+        "Bravo_Torso_body",
+        "Bravo_Torso_v_antenna",
         "Origin"
       ],
-      "triangles": 1916,
+      "textures": {
+        "Color": "assets/export/gear/Bravo_Torso_Color.png",
+        "Roughness": "assets/export/gear/Bravo_Torso_Roughness.png",
+        "Metalness": "assets/export/gear/Bravo_Torso_Metalness.png"
+      },
+      "triangles": 3552,
+      "size_studs": [
+        1.86,
+        3.001,
+        1.73
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Bravo.Torso"
     },
     "Bravo_Arm": {
       "file": "assets/export/gear/Bravo_Arm.fbx",
       "objects": [
-        "Bravo_Arm_band",
-        "Bravo_Arm_camoA",
-        "Bravo_Arm_cloth",
-        "Bravo_Arm_glove",
-        "Bravo_Arm_knee",
-        "Bravo_Arm_plate",
-        "Bravo_Arm_strap",
+        "Bravo_Arm_body",
         "Origin"
       ],
-      "triangles": 756,
+      "textures": {
+        "Color": "assets/export/gear/Bravo_Arm_Color.png",
+        "Roughness": "assets/export/gear/Bravo_Arm_Roughness.png",
+        "Metalness": "assets/export/gear/Bravo_Arm_Metalness.png"
+      },
+      "triangles": 2660,
+      "size_studs": [
+        0.805,
+        2.02,
+        0.74
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Bravo.Arm"
     },
     "Bravo_Arm_L": {
       "file": "assets/export/gear/Bravo_Arm_L.fbx",
       "objects": [
-        "Bravo_Arm_L_band",
-        "Bravo_Arm_L_camoA",
-        "Bravo_Arm_L_cloth",
-        "Bravo_Arm_L_glove",
-        "Bravo_Arm_L_knee",
-        "Bravo_Arm_L_plate",
-        "Bravo_Arm_L_strap",
+        "Bravo_Arm_L_body",
         "Origin"
       ],
-      "triangles": 756,
+      "textures": {
+        "Color": "assets/export/gear/Bravo_Arm_L_Color.png",
+        "Roughness": "assets/export/gear/Bravo_Arm_L_Roughness.png",
+        "Metalness": "assets/export/gear/Bravo_Arm_L_Metalness.png"
+      },
+      "triangles": 2660,
+      "size_studs": [
+        0.805,
+        2.02,
+        0.74
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Bravo.Arm_L"
     },
     "Bravo_Leg": {
       "file": "assets/export/gear/Bravo_Leg.fbx",
       "objects": [
-        "Bravo_Leg_boot",
-        "Bravo_Leg_camoA",
-        "Bravo_Leg_camoB",
-        "Bravo_Leg_helmetDark",
-        "Bravo_Leg_knee",
-        "Bravo_Leg_pouch",
-        "Bravo_Leg_sole",
-        "Bravo_Leg_strap",
+        "Bravo_Leg_body",
         "Origin"
       ],
-      "triangles": 864,
+      "textures": {
+        "Color": "assets/export/gear/Bravo_Leg_Color.png",
+        "Roughness": "assets/export/gear/Bravo_Leg_Roughness.png",
+        "Metalness": "assets/export/gear/Bravo_Leg_Metalness.png"
+      },
+      "triangles": 3120,
+      "size_studs": [
+        0.91,
+        2.03,
+        1.146
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Bravo.Leg"
     },
     "Bravo_Leg_L": {
       "file": "assets/export/gear/Bravo_Leg_L.fbx",
       "objects": [
-        "Bravo_Leg_L_boot",
-        "Bravo_Leg_L_camoA",
-        "Bravo_Leg_L_camoB",
-        "Bravo_Leg_L_helmetDark",
-        "Bravo_Leg_L_knee",
-        "Bravo_Leg_L_pouch",
-        "Bravo_Leg_L_sole",
-        "Bravo_Leg_L_strap",
+        "Bravo_Leg_L_body",
         "Origin"
       ],
-      "triangles": 864,
+      "textures": {
+        "Color": "assets/export/gear/Bravo_Leg_L_Color.png",
+        "Roughness": "assets/export/gear/Bravo_Leg_L_Roughness.png",
+        "Metalness": "assets/export/gear/Bravo_Leg_L_Metalness.png"
+      },
+      "triangles": 3120,
+      "size_studs": [
+        0.91,
+        2.03,
+        1.146
+      ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Bravo.Leg_L"
     }
   },
   "units": "1 unit = 1 stud",
-  "axes": "Y up, -Z forward (Roblox)"
+  "axes": "Y up, -Z forward (Roblox)",
+  "texture_size": 1024
 }
