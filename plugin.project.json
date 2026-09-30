@@ -1,6 +1,6 @@
 {
   "name": "IronfrontTools",
   "tree": {
-    "$path": "plugin/IronfrontTools.server.lua"
+    "$path": "plugin/IronfrontTools"
   }
 }

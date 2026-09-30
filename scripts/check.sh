@@ -30,6 +30,8 @@ if command -v "${T}lune" >/dev/null 2>&1; then
 	"${T}lune" run tests/harness.luau
 	echo "== Weapon / gear / pose harness (Lune)"
 	"${T}lune" run tests/assets.luau
+	echo "== Ironfront Tools asset installer (Lune)"
+	"${T}lune" run tests/plugin_installer.luau
 else
 	echo "== Map generation harness skipped (lune not installed)"
 fi

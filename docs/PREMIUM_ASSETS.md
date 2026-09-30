@@ -43,77 +43,95 @@ Each folder contains:
 
 ## Roblox Studio setup (once per place)
 
-Start with the game code synced (`rojo serve` → Rojo plugin → Connect), then rebuild and reinstall
-the Studio plugin so it has the new **Install Assets** button:
+**What is in the repository.** These files are in `claude/upbeat-fermi-oodwi6`, so a `git pull`
+or `Sync-Ironfront` brings them down:
 
-```
-rojo build plugin.project.json --plugin IronfrontTools.rbxmx
-```
-
-Restart Studio after installing the plugin.
-
-### 1. Import the IR-7
-
-1. Go to *Home → Import 3D* (or *File → Import 3D*) and choose
-   `assets/premium/weapons/IR7/IR7.fbx`. `IR7.glb` works too.
-2. In the importer panel (option names differ slightly between Studio versions):
-   * **Rig type:** *No rig*.
-   * **Merge meshes:** **off**. The separate parts are needed: the magazine drops out during
-     reloads and the optic hides while you aim.
-   * **Scale unit / file dimensions:** *Studs*. The preview should report about **2.98 studs**
-     long. If it doesn't, the installer rescales and warns.
-   * **World forward / up:** leave the defaults (front = −Z, up = +Y).
-   * Leave texture/material import **on**. The importer turns the embedded PBR maps into a
-     `SurfaceAppearance`.
-3. Click *Import*. A Model named **IR7** appears in Workspace.
-4. Click **Ironfront → Install Assets**. The Output shows
-   `IR7 -> ReplicatedStorage.ImportedAssets.Weapons.CB` and lists any warnings. The installer:
-   * moves and renames the model to `ReplicatedStorage.ImportedAssets.Weapons.CB`, the slot the
-     game reads;
-   * checks the size (it rescales on a unit mismatch) and the axes (it warns on a wrong
-     forward/up);
-   * checks every expected part (`IR7_receiver`, `IR7_olive_mag`, `IR7_receiver_optic`, …);
-   * makes every part cosmetic: no collision, query or touch, massless, `CollisionFidelity = Box`,
-     `RenderFidelity = Automatic`;
-   * copies the `SurfaceAppearance` to every part that didn't get one (all parts share one atlas)
-     and sets the lens to transparent Glass;
-   * records one undo step, so Ctrl+Z restores the previous state.
-
-### 2. Import the Ashford kit
-
-Import these six files the same way: *No rig*, *Merge meshes off*, *Studs*.
-
-| File | Installed as |
+| Asset | Files |
 |---|---|
-| `assets/premium/characters/Ashford/Ashford_Head.fbx` | `ImportedAssets.Gear.Alpha.Head` |
-| `…/Ashford_Torso.fbx` | `ImportedAssets.Gear.Alpha.Torso` |
-| `…/Ashford_Arm.fbx` | `ImportedAssets.Gear.Alpha.Arm` (right arm) |
-| `…/Ashford_Arm_L.fbx` | `ImportedAssets.Gear.Alpha.Arm_L` |
-| `…/Ashford_Leg.fbx` | `ImportedAssets.Gear.Alpha.Leg` (right leg) |
-| `…/Ashford_Leg_L.fbx` | `ImportedAssets.Gear.Alpha.Leg_L` |
+| IR-7 Carbine (the game's `CB` slot) | `assets/premium/weapons/IR7/IR7.fbx`, `.glb`, `.blend`, `IR7.json`, and `textures/IR7_{Color,Normal,Roughness,Metalness}.png` |
+| Ashford Coalition soldier (team `Alpha`) | `assets/premium/characters/Ashford/Ashford_{Head,Torso,Arm,Arm_L,Leg,Leg_L}.fbx` and `.glb`, `Ashford.blend`, `Ashford.json`, and `textures/Ashford_{Head,Torso,Arms,Legs}_*.png` |
 
-You can import all six before installing them. Select the six models, or leave them in Workspace,
-and click **Install Assets** once.
+The FBX files embed their textures. Rojo cannot turn FBX files into MeshParts, so you import them
+once with Studio's 3D Importer and save them in the place. Rojo never touches
+`ReplicatedStorage.ImportedAssets`.
+
+### 0. Plugin
+
+Run `Sync-Ironfront.cmd`. It rebuilds the **Ironfront Tools** plugin whenever the plugin changes.
+Restart Studio. The **Ironfront** toolbar has **Bake Map**, **Clear Map** and **Assets**.
+
+**Assets** opens the *Ironfront Assets* panel. Each premium asset shows one of these states:
+* `NOT IMPORTED`;
+* `READY TO INSTALL`: a fresh import was found in Workspace;
+* `INSTALLED`;
+* `NEW IMPORT - ALREADY INSTALLED`.
+
+It also lists any problems it finds: wrong scale, wrong axes, missing parts, missing textures,
+and imports it doesn't recognise.
+
+### 1. Import
+
+1. *Home → Import 3D*, then choose `assets/premium/weapons/IR7/IR7.fbx`.
+2. Importer settings (the names differ slightly between Studio versions):
+   * **Rig type:** *No rig*.
+   * **Merge meshes:** **off**. The magazine and optic must stay separate parts.
+   * **File dimensions / scale unit:** *Studs*. The IR-7 should be about **2.98 studs** long.
+   * **World forward / up:** the defaults (−Z forward, +Y up).
+   * **Import textures / materials:** **on**.
+3. Click *Import*. A Model named **IR7** appears in Workspace. Don't rename it.
+4. Repeat for the six `Ashford_*.fbx` files. You can import all seven files before installing.
+
+### 2. Install
+
+In the *Ironfront Assets* panel, click **Install / fix**. For each `READY` model it:
+* moves the model into its slot:
+
+  | Model | Installed as |
+  |---|---|
+  | `IR7` | `ImportedAssets.Weapons.CB` |
+  | `Ashford_Head` | `ImportedAssets.Gear.Alpha.Head` |
+  | `Ashford_Torso` | `ImportedAssets.Gear.Alpha.Torso` |
+  | `Ashford_Arm` | `ImportedAssets.Gear.Alpha.Arm` |
+  | `Ashford_Arm_L` | `ImportedAssets.Gear.Alpha.Arm_L` |
+  | `Ashford_Leg` | `ImportedAssets.Gear.Alpha.Leg` |
+  | `Ashford_Leg_L` | `ImportedAssets.Gear.Alpha.Leg_L` |
+
+* rescales it on a unit mismatch;
+* makes the parts cosmetic (no collision, query or touch; massless; Box collision fidelity);
+* copies the baked `SurfaceAppearance` to every part, and makes the optic lens see-through glass;
+* adds visible **attachment points** to the rifle's `Origin`: `Grip`, `Support`, `Muzzle`, `Sight`,
+  `Stock` and `Audio`. They show where the game puts the hands, muzzle flash and red-dot eye;
+* records one undo step (Ctrl+Z).
+
+The Output lists every move and any warnings.
+
+**Nothing installed is ever overwritten silently.**
+* If a model is already installed, the new import is shown as `NEW IMPORT - ALREADY INSTALLED` and
+  **Install / fix** skips it.
+* To swap it, click **Replace installed** twice within 8 seconds. The old model is **moved** to
+  `ServerStorage.IronfrontAssetBackups`, not deleted.
+* **Install / fix** also re-applies the safe fixes to installed models (shared textures, flags,
+  attachments) without replacing them.
+
+The same care applies to the map. When `Workspace.Map` exists, **Bake Map** asks you to click again
+within 8 seconds before it replaces the map. Save a copy of the place first.
 
 ### 3. If a part shows up untextured
 
-Some Studio versions import FBX textures only as a colour map, or not at all. When the installer
-warns `no SurfaceAppearance found`:
+Some Studio versions import FBX textures only as a colour map, or not at all. The panel then shows
+`no textures`.
+1. Open *Asset Manager → Bulk Import* and upload the PNGs from the asset's `textures/` folder.
+2. Add a `SurfaceAppearance` to one installed part (for example `…Weapons.CB.IR7_receiver`). Set
+   `ColorMap`, `NormalMap`, `RoughnessMap` and `MetalnessMap`. The arms have no metalness map.
+3. Click **Install / fix**. It copies that `SurfaceAppearance` to every other part of the model.
 
-1. Open *Asset Manager → Bulk Import* and upload the four PNGs from the asset's `textures/` folder.
-2. Add a `SurfaceAppearance` to one part (for example `…Weapons.CB.IR7_receiver`). Set
-   `ColorMap`, `NormalMap`, `RoughnessMap` and `MetalnessMap` to the uploaded IDs. Atlases without a `*_Metalness.png` (the arms)
-   leave `MetalnessMap` empty.
-3. Click **Install Assets** again, with that model selected. It copies the `SurfaceAppearance` to
-   every other part.
-
-Until this is done, untextured parts are recoloured from the palette in `WeaponModels.CB` and
-`GearModels.Alpha`, so the look stays consistent, just without the texture detail.
+Until this is done, untextured parts are recoloured from the palette (`WeaponModels.CB`,
+`GearModels.Alpha`), so the look stays consistent without the texture detail.
 
 ### 4. Save and check
 
-Save the place. The Rojo project only maps `ReplicatedStorage.Shared`, so the imported assets live
-in the place file. Then play-test with 2+ clients:
+**Save the place** (File → Save). The imported assets live in the place file; Rojo doesn't manage
+`ImportedAssets`. Then play-test with 2+ clients:
 
 * the carbine's weapon model has `AssetSource = imported`;
 * an Ashford character's `Gear` folder has `Source = imported`, and the blocky R6 torso, arms and
