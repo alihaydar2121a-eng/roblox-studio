@@ -1,30 +1,43 @@
 --[[
 	OPERATION IRONFRONT — server bootstrap.
-	Initialisation order matters: networking and state first, then the world,
-	then gameplay services, then the match loop.
+	Order: networking + state + player-facing services first (so early team
+	requests are handled), then the battlefield (baked or generated), then
+	objectives and the match loop.
 ]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Net = require(script.Net)
 local GameState = require(script.GameState)
-local MapBuilder = require(script.World.MapBuilder)
 local TeamService = require(script.Services.TeamService)
 local CombatService = require(script.Services.CombatService)
 local SpawnService = require(script.Services.SpawnService)
 local ObjectiveService = require(script.Services.ObjectiveService)
 local MatchService = require(script.Services.MatchService)
-local MapLayout = require(game:GetService("ReplicatedStorage").Shared.Config.MapLayout)
+local MapBuilder = require(script.World.MapBuilder)
+local MapLayout = require(ReplicatedStorage:WaitForChild("Shared").Config.MapLayout)
 
 Net.init()
 GameState.init()
-
-local world = MapBuilder.build()
-
+GameState.set("MapStatus", "Loading")
 TeamService.init()
 CombatService.init()
-SpawnService.setSpawnPoints(world.SpawnPoints)
 SpawnService.init()
-ObjectiveService.init(MapLayout.Zones, world.ZoneVisuals)
 MatchService.init()
+
+local started = os.clock()
+local ok, meta, source = pcall(MapBuilder.ensure)
+if not ok then
+	GameState.set("MapStatus", "Failed")
+	error("[Ironfront] battlefield generation failed: " .. tostring(meta))
+end
+print(("[Ironfront] battlefield ready (%s) in %.1fs"):format(source, os.clock() - started))
+GameState.set("MapStatus", "Ready")
+
+SpawnService.setSpawnPoints(meta.SpawnPoints)
+local village = meta.Zones.B and meta.Zones.B.Center
+SpawnService.setDeployFocus((village or Vector3.new(40, 12, 20)) + Vector3.new(0, 40, 0))
+ObjectiveService.init(MapLayout.Zones, meta.Zones)
 MatchService.start()
 
 print("[Ironfront] Server ready")

@@ -3,10 +3,14 @@
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
-      "Shared": { "$path": "src/shared" }
+      "Shared": {
+        "$path": "src/shared"
+      }
     },
     "ServerScriptService": {
-      "Server": { "$path": "src/server" }
+      "Server": {
+        "$path": "src/server"
+      }
     },
     "StarterPlayer": {
       "$properties": {
@@ -15,7 +19,9 @@
         "CharacterJumpPower": 45
       },
       "StarterPlayerScripts": {
-        "Client": { "$path": "src/client" }
+        "Client": {
+          "$path": "src/client"
+        }
       }
     },
     "Players": {
@@ -24,22 +30,95 @@
         "RespawnTime": 6
       }
     },
-    "Teams": { "$className": "Teams" },
+    "Teams": {
+      "$className": "Teams"
+    },
     "Workspace": {
       "$properties": {
         "StreamingEnabled": true,
         "StreamingTargetRadius": 768,
-        "StreamingMinRadius": 128,
-        "Gravity": 196.2
+        "StreamingMinRadius": 160,
+        "Gravity": 196.2,
+        "StreamingIntegrityMode": {
+          "Enum": 3
+        }
       }
     },
     "Lighting": {
       "$properties": {
-        "Brightness": 2.2,
-        "ClockTime": 14.5,
+        "Technology": {
+          "Enum": 4
+        },
+        "Brightness": 2.6,
+        "ClockTime": 15.4,
+        "GeographicLatitude": 38,
         "GlobalShadows": true,
-        "EnvironmentDiffuseScale": 0.6,
-        "EnvironmentSpecularScale": 0.4
+        "ShadowSoftness": 0.25,
+        "Ambient": [
+          0.27,
+          0.28,
+          0.31
+        ],
+        "OutdoorAmbient": [
+          0.5,
+          0.5,
+          0.52
+        ],
+        "EnvironmentDiffuseScale": 1,
+        "EnvironmentSpecularScale": 0.55,
+        "ExposureCompensation": 0.1,
+        "ColorShift_Top": [
+          1,
+          0.96,
+          0.9
+        ]
+      },
+      "Atmosphere": {
+        "$className": "Atmosphere",
+        "$properties": {
+          "Density": 0.34,
+          "Offset": 0.22,
+          "Color": [
+            0.78,
+            0.76,
+            0.72
+          ],
+          "Decay": [
+            0.38,
+            0.42,
+            0.47
+          ],
+          "Glare": 0.25,
+          "Haze": 1.7
+        }
+      },
+      "Bloom": {
+        "$className": "BloomEffect",
+        "$properties": {
+          "Intensity": 0.35,
+          "Size": 22,
+          "Threshold": 1.6
+        }
+      },
+      "SunRays": {
+        "$className": "SunRaysEffect",
+        "$properties": {
+          "Intensity": 0.05,
+          "Spread": 0.55
+        }
+      },
+      "Grade": {
+        "$className": "ColorCorrectionEffect",
+        "$properties": {
+          "Brightness": 0.01,
+          "Contrast": 0.07,
+          "Saturation": -0.06,
+          "TintColor": [
+            1,
+            0.98,
+            0.95
+          ]
+        }
       }
     }
   }

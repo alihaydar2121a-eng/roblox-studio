@@ -49,21 +49,24 @@ local function publish(zone)
 	end
 end
 
--- zoneDefs: MapLayout.Zones; visualsById: { [zoneId] = { Flag = Part, Ring = Part } }
-function ObjectiveService.init(zoneDefs, visualsById)
+-- zoneDefs: MapLayout.Zones; zoneMeta: { [zoneId] = { Center = Vector3, Flag = Part, Ring = Part } }
+-- (from MapBuilder.readMetadata — centres sit on the generated terrain).
+function ObjectiveService.init(zoneDefs, zoneMeta)
 	for _, def in ipairs(zoneDefs) do
+		local meta = zoneMeta[def.Id] or {}
+		local center = meta.Center or Vector3.new(def.Position[1], 0, def.Position[2])
 		local config = Instance.new("Configuration")
 		config.Name = def.Id
 		config:SetAttribute("Name", def.Name)
-		config:SetAttribute("Position", Vector3.new(def.Position[1], def.Position[2], def.Position[3]))
+		config:SetAttribute("Position", center)
 		config:SetAttribute("Radius", def.Radius)
 		config.Parent = GameState.Zones
 		local zone = {
 			def = def,
 			state = CaptureLogic.newState(),
 			config = config,
-			visuals = visualsById[def.Id],
-			center = Vector3.new(def.Position[1], def.Position[2], def.Position[3]),
+			visuals = { Flag = meta.Flag, Ring = meta.Ring },
+			center = center,
 		}
 		table.insert(zones, zone)
 		publish(zone)

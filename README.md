@@ -1,56 +1,70 @@
 # OPERATION IRONFRONT
 
 An original large-scale multiplayer military team shooter for Roblox (R6), built with Luau and Rojo.
-Two fictional factions — the **Ashford Coalition** (olive) and the **Varn Directorate** (steel blue) —
-fight over three objectives in **Kestrel Valley**, a procedurally assembled battlefield of forests,
-roads, hills, villages and a farm. No third-party or unlicensed assets are used: all geometry is built
-from Roblox primitives and built-in materials, and audio IDs are empty placeholders.
+Two fictional factions fight over three objectives in **Kestrel Valley**:
 
-## Status: Phase 1 — playable vertical slice
+* the **Ashford Coalition** (olive, south)
+* the **Varn Directorate** (steel blue, north)
 
-| Feature | State |
+Kestrel Valley is a mountain-ringed valley with a river, forests, trenches, a military base, a
+village and an industrial works. No third-party or unlicensed assets are used. Geometry is Roblox
+primitives with built-in materials, and audio IDs are empty placeholders
+(see [docs/ASSETS.md](docs/ASSETS.md)).
+
+![Kestrel Valley overview](docs/previews/map_overview.png)
+*Offline top-down render of the generated heightfield and structures (not a Roblox screenshot).*
+
+## Status
+
+| Area | State |
 |---|---|
-| Rojo project, modular client/server/shared layout | ✅ |
-| Team selection (balance-validated), auto-balance | ✅ |
-| Server-driven spawning at team bases, spawn protection, respawn timer | ✅ |
-| Original uniforms (body colours + helmet/vest/armbands) | ✅ |
-| Large map: terrain, hills, forests, roads, 11 buildings (2-storey with ramps), bases | ✅ |
-| 3 capture points with contested / neutralize / capture logic | ✅ |
-| Tickets (deaths + majority bleed), 20-min timer, victory, intermission, round reset | ✅ |
-| Server-authoritative hitscan rifle: validation, cadence, ammo, reload, falloff, headshots | ✅ |
-| Hitmarkers, damage direction, tracers, dust puffs (non-graphic) | ✅ |
-| HUD: tickets, timer, objective strip, capture bar, health, ammo, kill feed, notices | ✅ |
-| World objective markers with distance | ✅ |
-| Scoreboard (leaderstats: Score / Kills / Deaths) | ✅ |
-| PC (mouse/keyboard), gamepad and mobile touch buttons | ✅ (untested on device) |
-| Classes, vehicles, destruction, minimap/compass, persistence, settings | ⏳ see [docs/ROADMAP.md](docs/ROADMAP.md) |
+| **Milestone 1 — visual foundation** | ✅ Implemented and verified offline. Needs a Studio pass: [docs/STUDIO_VALIDATION.md](docs/STUDIO_VALIDATION.md) |
+| Terrain: mountains, river and brook, trenches, spires, painted roads, slope-aware materials | ✅ |
+| Fort Harlow (A), Millbrook village with ~20 buildings (B), Kessler Works (C), 2 HQs, 15 outposts, bridges | ✅ |
+| Buildings with interiors, stairs, roof access, framed windows, pitched and vaulted roofs | ✅ |
+| 5 tree species, bushes, rocks, logs, puddles | ✅ |
+| Cinematic lighting persisted in Rojo; Studio bake plugin; runtime fallback | ✅ |
+| Phase 1 gameplay: teams, spawning, rifle, capture points, tickets, HUD | ✅ (from the previous commit) |
+| Weapons & soldiers, SFX/VFX, full UI and classes, vehicles and destruction | ⏳ Milestones 2–5, see [docs/ROADMAP.md](docs/ROADMAP.md) |
 
-> **Honesty note:** this code has been syntax-checked, unit-tested (pure logic) and built into a place
-> file with Rojo, but it has **not yet been run inside Roblox Studio**. See
-> [docs/STUDIO_VALIDATION.md](docs/STUDIO_VALIDATION.md) for the play-test checklist.
+> **Honesty note:** the code is syntax-checked and unit-tested, the whole map generator is executed
+> offline under Lune with real Roblox datatypes, and the place and plugin build with Rojo. None of it
+> has been run inside Roblox Studio by the author yet. Please work through
+> [docs/STUDIO_VALIDATION.md](docs/STUDIO_VALIDATION.md).
+
+| Millbrook | Fort Harlow | Kessler Works |
+|---|---|---|
+| ![](docs/previews/millbrook.png) | ![](docs/previews/fort_harlow.png) | ![](docs/previews/kessler_works.png) |
+
+*Offline software renders of generated parts, without terrain.*
 
 ## Layout
 
 ```
-default.project.json         Rojo tree (StreamingEnabled, CharacterAutoLoads=false, Teams, Lighting)
+default.project.json         Rojo tree (streaming, lighting + effects, Teams, Players)
+plugin.project.json          Studio plugin "Ironfront Tools" (Bake / Clear map)
 src/shared  -> ReplicatedStorage.Shared
-  Config/   GameConfig, WeaponConfig, MapLayout, SoundConfig   (pure data)
-  Logic/    CaptureLogic, TicketLogic, WeaponLogic, TeamLogic  (pure, unit-tested)
-  Util/     RateLimiter, Signal, Validate, Color
+  Config/   GameConfig, WeaponConfig, MapLayout, SoundConfig      (pure data)
+  Logic/    CaptureLogic, TicketLogic, WeaponLogic, TeamLogic     (pure, unit-tested)
+  Util/     Rng, RateLimiter, Signal, Validate, Color
   Net/      Remotes (single definition of every network endpoint)
 src/server  -> ServerScriptService.Server (init.server.lua bootstrap)
-  Net.lua          creates remotes, per-player rate limiting, error isolation
-  GameState.lua    replicated match/zone state as attributes
-  World/           MapBuilder (deterministic battlefield), Builder helpers
+  Net.lua, GameState.lua
   Services/        TeamService, SpawnService, UniformService, WeaponFactory,
                    CombatService, ObjectiveService, MatchService
-src/client  -> StarterPlayerScripts.Client (init.client.lua bootstrap)
+  World/           Map generator: Plans, Heightfield, TerrainGenerator, Kit, Props,
+                   Buildings, Structures, Foliage, Sites/*, MapBuilder, Env
+src/client  -> StarterPlayerScripts.Client
   Controllers/     WeaponController, EffectsController, HudController,
                    TeamSelectController, ObjectiveMarkers, SoundPlayer
   UI/              Ui helper, Theme
-tests/             luau unit tests for shared logic
-scripts/check.sh   syntax check + tests + rojo build
+tests/             luau unit tests + Lune generation harness
+scripts/           check.sh, heightmap/parts preview renderers
+docs/              MAP_PIPELINE, STUDIO_VALIDATION, ASSETS, ROADMAP, previews/
 ```
+
+The map pipeline (generator, baking and previews) is documented in
+[docs/MAP_PIPELINE.md](docs/MAP_PIPELINE.md).
 
 ### Authority & networking model
 * The client only sends **intent**: `RequestTeam(teamId)`, `Fire({o=origin, d=direction})`, `Reload()`.
@@ -63,34 +77,39 @@ scripts/check.sh   syntax check + tests + rojo build
   `ReplicatedStorage.GameState` attributes (independent of what workspace parts have streamed in).
 * Cosmetic shot effects use an `UnreliableRemoteEvent` and are distance-culled on the client.
 
-### Scaling toward 80 players
-Objective checks are O(players × zones) on a 0.25 s tick; zone attributes only replicate on change;
-tracers are unreliable + culled; the map is anchored primitives under StreamingEnabled. Known work for
-80p: pool effect parts, lag-compensated hit validation, and spatial partitioning if more zones are added.
+### Performance & scale
+The target is a stable 24-player server; 80 players will only be claimed after load testing.
+* Objective checks are O(players × zones) on a 0.25 s tick, and zone attributes replicate only on
+  change.
+* Tracers use unreliable remotes and are distance-culled.
+* The map is anchored, `CanTouch=false` geometry (~21 k parts, 65 lights) under StreamingEnabled with
+  `PauseOutsideLoadedArea`.
+* Buildings and trees are atomic streaming models; buildings request `StreamingMesh` LOD.
+* Foliage canopies don't collide or block raycasts.
 
 ## Setup: Rojo → Roblox Studio
 
 1. **Install Rojo 7.4.x**
-   * CLI: via [Aftman](https://github.com/LPGhatguy/aftman) (`aftman install` in this repo uses `aftman.toml`),
-     or download from <https://github.com/rojo-rbx/rojo/releases>.
-   * Studio plugin: in a terminal run `rojo plugin install`, or install "Rojo" from the Creator Store.
-2. **Create a place**: open Roblox Studio → *New* → *Baseplate*. Delete the `Baseplate` part and the
-   default `SpawnLocation` in Workspace (the map is generated at runtime).
-3. **Game settings** (Home → Game Settings; the place must be published/saved to Roblox to edit some):
-   * *Avatar* → **Avatar Type: R6** (the server logs a warning if characters are not R6).
-   * *Places* → set **Max Players** to 24 (Phase 1 target).
-   * *Security* → enable "Allow HTTP Requests" is **not** required. Enable Studio API access only when
-     persistence arrives in Phase 4.
-4. **Serve**: from the repo root run `rojo serve`. In Studio open the *Rojo* plugin and click
-   **Connect** (default `localhost:34872`). The `Shared`, `Server` and `Client` containers plus the
-   Workspace/Players/Lighting properties sync into the place.
-5. **Play-test**: *Test* → *Clients and Servers* → 2+ players → *Start*. Pick a side in the
-   deployment screen in each client window. Single-player *Play* works too (you can capture points
-   but there are no opponents).
-6. Save the place (File → Save to Roblox) — Rojo syncs code; the place file keeps game settings.
+   * CLI: `aftman install` in this repo (uses `aftman.toml`), or download it from
+     <https://github.com/rojo-rbx/rojo/releases>.
+   * Studio sync plugin: `rojo plugin install`.
+   * Ironfront tools plugin: `rojo build plugin.project.json --plugin IronfrontTools.rbxmx`, then
+     restart Studio.
+2. **Create a place:** Studio → *New* → *Baseplate*. Delete `Workspace.Baseplate` and
+   `Workspace.SpawnLocation`.
+3. **Game settings** (the place must be saved to Roblox for some of these):
+   * *Avatar* → **Avatar Type: R6**
+   * *Places* → **Max Players: 24**
+4. **Sync:** run `rojo serve` in the repo, then *Rojo* plugin → **Connect**. Code, lighting effects and
+   Workspace streaming settings sync in.
+5. **Bake the map** (Edit mode): toolbar **Ironfront → Bake Map**. Wait for
+   `[MapBuilder] done: … parts` in Output.
+6. **Save** (File → Save to Roblox / Publish). The terrain and `Workspace.Map` are stored in the place.
+7. **Play-test:** *Test* → *Clients and Servers* → 2+ players. Pick a side in each window.
 
-Alternatively build a place file offline: `rojo build default.project.json -o OperationIronfront.rbxlx`
-and open it in Studio (you still need step 3's settings).
+Skipping step 5 still works: the server generates the map at startup (see
+[docs/MAP_PIPELINE.md](docs/MAP_PIPELINE.md)). To build a place file offline instead, run
+`rojo build default.project.json -o OperationIronfront.rbxlx`, open it, then do steps 3, 5 and 6.
 
 ## Controls
 * **PC:** WASD move, mouse aim (over-the-shoulder, cursor locked while armed), LMB fire, R reload,
@@ -100,6 +119,7 @@ and open it in Studio (you still need step 3's settings).
 
 ## Development checks
 ```
-./scripts/check.sh            # needs luau, luau-compile, rojo on PATH (or TOOLS_DIR=...)
+./scripts/check.sh      # luau syntax, unit tests, Lune generation harness, rojo builds
 ```
-CI (`.github/workflows/check.yml`) runs the same script on every push.
+Tools: `luau`, `luau-compile`, `rojo`, and optionally `lune` (for the harness), on PATH or via
+`TOOLS_DIR=...`. CI (`.github/workflows/check.yml`) runs the same script on every push.

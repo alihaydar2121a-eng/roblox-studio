@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
-# Offline checks: Luau syntax for every source file, unit tests, Rojo build.
-# Requires `luau`, `luau-compile` and `rojo` on PATH (or TOOLS_DIR pointing at them).
+# Offline checks for OPERATION IRONFRONT.
+#   1. Luau syntax for every source/test file
+#   2. Unit tests (pure game logic + world planning/heightfield)
+#   3. Full map-generation harness under Lune (real Roblox datatypes)
+#   4. Rojo builds of the place and the Studio plugin
+# Needs luau + luau-compile + rojo (+ lune for step 3) on PATH, or TOOLS_DIR.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 T="${TOOLS_DIR:+$TOOLS_DIR/}"
@@ -11,14 +15,24 @@ while IFS= read -r f; do
 	if ! "${T}luau-compile" --binary "$f" >/dev/null 2>/tmp/luau_err; then
 		echo "Syntax error in $f"; cat /tmp/luau_err; fail=1
 	fi
-done < <(find src tests -name '*.lua' -o -name '*.luau')
+done < <(find src tests plugin -name '*.lua' -o -name '*.luau')
 [ "$fail" = 0 ] || exit 1
 echo "ok"
 
-echo "== Unit tests"
+echo "== Unit tests: gameplay logic"
 "${T}luau" tests/run.luau
+echo "== Unit tests: world planning + heightfield"
+"${T}luau" tests/world.luau
+
+if command -v "${T}lune" >/dev/null 2>&1; then
+	echo "== Map generation harness (Lune)"
+	"${T}lune" run tests/harness.luau
+else
+	echo "== Map generation harness skipped (lune not installed)"
+fi
 
 echo "== Rojo build"
 mkdir -p build
 "${T}rojo" build default.project.json -o build/OperationIronfront.rbxlx
-echo "Built build/OperationIronfront.rbxlx"
+"${T}rojo" build plugin.project.json -o build/IronfrontTools.rbxmx
+echo "Built build/OperationIronfront.rbxlx and build/IronfrontTools.rbxmx"

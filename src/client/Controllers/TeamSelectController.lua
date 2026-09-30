@@ -1,17 +1,21 @@
 --[[
 	TeamSelectController
-	Deployment screen: choose a side or auto-balance. Shown while the player has
-	no team, and reopenable with [M] while waiting to respawn. The server
-	validates balance and timing; this UI only sends requests.
+	Compact deployment panel docked to the left edge over a slow cinematic orbit
+	of Millbrook. Shown while the player has no team, reopenable with [M] while
+	redeploying. The server validates balance and timing; this UI only sends
+	requests.
 ]]
 
 local Players = game:GetService("Players")
 local Teams = game:GetService("Teams")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local GameConfig = require(Shared.Config.GameConfig)
+local MapLayout = require(Shared.Config.MapLayout)
 local Remotes = require(Shared.Net.Remotes)
 
 local Ui = require(script.Parent.Parent.UI.Ui)
@@ -21,11 +25,13 @@ local TeamSelectController = {}
 
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
-local gui
+local gui, panel, status
 local countLabels = {}
 local requestRemote
+local orbitAngle = math.rad(215)
+local orbitConnection
 
-local OVERVIEW = CFrame.lookAt(Vector3.new(-520, 260, -520), Vector3.new(40, 0, 0))
+local PANEL_WIDTH = 330
 
 local function teamCount(teamId)
 	for _, team in ipairs(Teams:GetTeams()) do
@@ -38,7 +44,8 @@ end
 
 local function refreshCounts()
 	for id, label in pairs(countLabels) do
-		label.Text = ("%d soldiers deployed"):format(teamCount(id))
+		local n = teamCount(id)
+		label.Text = ("%d deployed"):format(n)
 	end
 end
 
@@ -52,21 +59,67 @@ local function isAlive()
 	return humanoid ~= nil and humanoid.Health > 0
 end
 
+-- Orbit focus: objective B's replicated ground position, else the layout centre.
+local function focusPoint()
+	local state = ReplicatedStorage:FindFirstChild("GameState")
+	local zones = state and state:FindFirstChild("Zones")
+	local b = zones and zones:FindFirstChild("B")
+	local pos = b and b:GetAttribute("Position")
+	if pos then
+		return pos
+	end
+	local c = MapLayout.Sites.Village.Center
+	return Vector3.new(c[1], 14, c[2])
+end
+
+local function startOrbit()
+	if orbitConnection then
+		return
+	end
+	camera.CameraType = Enum.CameraType.Scriptable
+	orbitConnection = RunService.RenderStepped:Connect(function(dt)
+		orbitAngle += dt * 0.025
+		local focus = focusPoint()
+		local radius, height = 300, 150
+		local eye = focus + Vector3.new(math.cos(orbitAngle) * radius, height, math.sin(orbitAngle) * radius)
+		-- Aim slightly below the focus so the frame is mostly battlefield, not sky.
+		camera.CFrame = CFrame.lookAt(eye, focus - Vector3.new(0, 25, 0))
+	end)
+end
+
+local function stopOrbit()
+	if orbitConnection then
+		orbitConnection:Disconnect()
+		orbitConnection = nil
+	end
+end
+
 function TeamSelectController.show()
 	refreshCounts()
 	gui.Enabled = true
+	panel.Position = UDim2.new(0, -PANEL_WIDTH, 0, 0)
+	TweenService:Create(panel, TweenInfo.new(0.35, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Position = UDim2.new(0, 0, 0, 0) }):Play()
 	if not isAlive() then
-		camera.CameraType = Enum.CameraType.Scriptable
-		camera.CFrame = OVERVIEW
+		startOrbit()
 	end
 end
 
 function TeamSelectController.hide()
 	gui.Enabled = false
+	stopOrbit()
 end
 
 local function request(teamId)
 	requestRemote:FireServer(teamId)
+end
+
+local function hover(button, base, over)
+	button.MouseEnter:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.12), { BackgroundColor3 = over }):Play()
+	end)
+	button.MouseLeave:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.12), { BackgroundColor3 = base }):Play()
+	end)
 end
 
 local function build()
@@ -78,104 +131,103 @@ local function build()
 		Enabled = false,
 		Parent = player:WaitForChild("PlayerGui"),
 	})
-	local backdrop = Ui.new("Frame", {
-		Size = UDim2.fromScale(1, 1),
-		BackgroundColor3 = Color3.fromRGB(10, 12, 14),
-		BackgroundTransparency = 0.35,
-		Parent = gui,
-	})
-	Ui.new("UIScale", { Scale = math.clamp(camera.ViewportSize.Y / 900, 0.6, 1.2), Parent = backdrop })
-	Ui.label({
-		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0.12, 0),
-		Size = UDim2.fromOffset(700, 50),
-		Text = "OPERATION IRONFRONT",
-		TextSize = 42,
-		Parent = backdrop,
-	})
-	Ui.label({
-		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0.12, 52),
-		Size = UDim2.fromOffset(700, 24),
-		Text = "Kestrel Valley · Capture and hold objectives A, B and C",
-		TextSize = 18,
-		TextColor3 = Theme.Muted,
-		Font = Enum.Font.Gotham,
-		Parent = backdrop,
-	})
+	local scale = Ui.new("UIScale", { Parent = gui })
+	local function rescale()
+		scale.Scale = math.clamp(camera.ViewportSize.Y / 820, 0.62, 1.1)
+	end
+	camera:GetPropertyChangedSignal("ViewportSize"):Connect(rescale)
+	rescale()
 
-	local row = Ui.new("Frame", {
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.52),
-		Size = UDim2.fromOffset(620, 260),
-		BackgroundTransparency = 1,
-		Parent = backdrop,
+	-- Left-docked translucent column; the battlefield stays visible to the right.
+	panel = Ui.new("Frame", {
+		Name = "Panel",
+		Size = UDim2.new(0, PANEL_WIDTH, 1, 0),
+		BackgroundColor3 = Color3.fromRGB(12, 14, 16),
+		BackgroundTransparency = 0.15,
+		BorderSizePixel = 0,
+		Parent = gui,
 	}, {
-		Ui.new("UIListLayout", {
-			FillDirection = Enum.FillDirection.Horizontal,
-			HorizontalAlignment = Enum.HorizontalAlignment.Center,
-			Padding = UDim.new(0, 20),
+		Ui.new("UIGradient", {
+			Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.8, 0.15), NumberSequenceKeypoint.new(1, 0.9) }),
 		}),
+		Ui.new("UIPadding", { PaddingLeft = UDim.new(0, 22), PaddingRight = UDim.new(0, 26), PaddingTop = UDim.new(0, 70), PaddingBottom = UDim.new(0, 20) }),
+		Ui.new("UIListLayout", { Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
-	for _, def in ipairs(GameConfig.Teams) do
+	Ui.label({ LayoutOrder = 1, Size = UDim2.new(1, 0, 0, 26), Text = "OPERATION IRONFRONT", TextSize = 24, TextXAlignment = Enum.TextXAlignment.Left, Parent = panel })
+	Ui.label({
+		LayoutOrder = 2, Size = UDim2.new(1, 0, 0, 18), Text = "KESTREL VALLEY  ·  CAPTURE A · B · C", TextSize = 13, Font = Enum.Font.GothamMedium,
+		TextColor3 = Theme.Muted, TextXAlignment = Enum.TextXAlignment.Left, Parent = panel,
+	})
+	Ui.new("Frame", { LayoutOrder = 3, Size = UDim2.new(1, 0, 0, 1), BackgroundColor3 = Color3.fromRGB(80, 84, 88), BorderSizePixel = 0, Parent = panel })
+	Ui.label({ LayoutOrder = 4, Size = UDim2.new(1, 0, 0, 16), Text = "CHOOSE YOUR SIDE", TextSize = 12, TextColor3 = Theme.Muted, TextXAlignment = Enum.TextXAlignment.Left, Parent = panel })
+
+	for index, def in ipairs(GameConfig.Teams) do
 		local color = Theme.teamColor(def.Id)
+		local base = Color3.fromRGB(30, 33, 36)
 		local card = Ui.new("TextButton", {
-			Size = UDim2.fromOffset(300, 260),
-			BackgroundColor3 = Theme.Panel,
-			BackgroundTransparency = 0.1,
-			AutoButtonColor = true,
+			LayoutOrder = 4 + index,
+			Size = UDim2.new(1, 0, 0, 74),
+			BackgroundColor3 = base,
+			AutoButtonColor = false,
 			Text = "",
-			Parent = row,
-		}, { Ui.corner(10), Ui.stroke(color, 3, 0) })
-		Ui.new("Frame", {
-			Size = UDim2.new(1, 0, 0, 90),
-			BackgroundColor3 = color,
-			BackgroundTransparency = 0.2,
-			BorderSizePixel = 0,
-			Parent = card,
-		}, { Ui.corner(10) })
-		Ui.label({ Position = UDim2.fromOffset(0, 18), Size = UDim2.new(1, 0, 0, 30), Text = def.ShortName, TextSize = 30, Parent = card })
-		Ui.label({ Position = UDim2.fromOffset(0, 104), Size = UDim2.new(1, 0, 0, 30), Text = def.Name, TextSize = 22, Parent = card })
+			Parent = panel,
+		}, { Ui.corner(6), Ui.stroke(color, 1, 0.55) })
+		hover(card, base, Color3.fromRGB(44, 48, 52))
+		Ui.new("Frame", { Size = UDim2.new(0, 5, 1, 0), BackgroundColor3 = color, BorderSizePixel = 0, Parent = card }, { Ui.corner(3) })
+		Ui.label({ Position = UDim2.fromOffset(18, 12), Size = UDim2.new(1, -110, 0, 22), Text = def.Name, TextSize = 18, TextXAlignment = Enum.TextXAlignment.Left, Parent = card })
 		countLabels[def.Id] = Ui.label({
-			Position = UDim2.fromOffset(0, 140),
-			Size = UDim2.new(1, 0, 0, 20),
-			Text = "",
-			TextSize = 15,
-			TextColor3 = Theme.Muted,
-			Font = Enum.Font.Gotham,
-			Parent = card,
+			Position = UDim2.fromOffset(18, 40), Size = UDim2.new(1, -110, 0, 18), Text = "", TextSize = 13, Font = Enum.Font.GothamMedium,
+			TextColor3 = Theme.Muted, TextXAlignment = Enum.TextXAlignment.Left, Parent = card,
 		})
-		Ui.label({ Position = UDim2.fromOffset(0, 200), Size = UDim2.new(1, 0, 0, 30), Text = "DEPLOY", TextSize = 22, TextColor3 = color, Parent = card })
+		Ui.label({
+			AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -14, 0.5, 0), Size = UDim2.fromOffset(84, 30), Text = "DEPLOY ›",
+			TextSize = 15, TextColor3 = color, TextXAlignment = Enum.TextXAlignment.Right, Parent = card,
+		})
 		card.Activated:Connect(function()
 			request(def.Id)
 		end)
 	end
 
+	local autoBase = Color3.fromRGB(58, 62, 68)
 	local auto = Ui.new("TextButton", {
-		AnchorPoint = Vector2.new(0.5, 0),
-		Position = UDim2.new(0.5, 0, 0.52, 150),
-		Size = UDim2.fromOffset(260, 44),
-		BackgroundColor3 = Color3.fromRGB(60, 64, 70),
+		LayoutOrder = 10,
+		Size = UDim2.new(1, 0, 0, 40),
+		BackgroundColor3 = autoBase,
+		AutoButtonColor = false,
 		Text = "AUTO-BALANCE",
 		Font = Enum.Font.GothamBold,
-		TextSize = 18,
+		TextSize = 15,
 		TextColor3 = Theme.Text,
-		Parent = backdrop,
-	}, { Ui.corner(8) })
+		Parent = panel,
+	}, { Ui.corner(6) })
+	hover(auto, autoBase, Color3.fromRGB(78, 84, 92))
 	auto.Activated:Connect(function()
 		request("Auto")
 	end)
+
+	status = Ui.label({
+		LayoutOrder = 11, Size = UDim2.new(1, 0, 0, 18), Text = "", TextSize = 13, Font = Enum.Font.GothamMedium,
+		TextColor3 = Theme.Warning, TextXAlignment = Enum.TextXAlignment.Left, Parent = panel,
+	})
 	Ui.label({
-		AnchorPoint = Vector2.new(0.5, 1),
-		Position = UDim2.new(0.5, 0, 1, -24),
-		Size = UDim2.fromOffset(800, 40),
+		AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.new(0, 22, 1, -18),
+		Size = UDim2.fromOffset(PANEL_WIDTH - 40, 64),
 		TextWrapped = true,
-		Text = "PC: WASD move · Mouse aim · LMB fire · R reload · Alt free cursor · Tab scoreboard\nMobile: on-screen FIRE / R buttons · aim with the screen centre",
-		TextSize = 14,
+		TextYAlignment = Enum.TextYAlignment.Bottom,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Text = "PC  WASD move · Mouse aim · LMB fire · R reload · Alt cursor · Tab scores\nPAD  R2 fire · X reload\nMOBILE  FIRE / R buttons · aim at screen centre",
+		TextSize = 12,
 		Font = Enum.Font.Gotham,
 		TextColor3 = Theme.Muted,
-		Parent = backdrop,
+		Parent = gui,
 	})
+end
+
+local function refreshStatus()
+	local state = ReplicatedStorage:FindFirstChild("GameState")
+	local mapStatus = state and state:GetAttribute("MapStatus")
+	status.Text = (mapStatus ~= "Ready") and "Preparing battlefield…" or ""
 end
 
 function TeamSelectController.start()
@@ -190,12 +242,18 @@ function TeamSelectController.start()
 		if team:IsA("Team") then
 			team.PlayerAdded:Connect(refreshCounts)
 			team.PlayerRemoved:Connect(refreshCounts)
+			refreshCounts()
 		end
 	end)
+	local state = ReplicatedStorage:WaitForChild("GameState")
+	state:GetAttributeChangedSignal("MapStatus"):Connect(refreshStatus)
+	refreshStatus()
 
 	player:GetPropertyChangedSignal("Team"):Connect(function()
-		if hasTeam() then
+		if hasTeam() and isAlive() then
 			TeamSelectController.hide()
+		elseif hasTeam() then
+			status.Text = "Deploying…"
 		end
 	end)
 	player.CharacterAdded:Connect(function()

@@ -1,35 +1,49 @@
-# Implementation plan & milestones
+# Roadmap
 
-## Phase 1 — Vertical slice ✅ (this commit)
-Rojo layout; server services (Team, Spawn, Uniform, Combat, Objective, Match); procedural Kestrel
-Valley; three capture points with contested logic; tickets/timer/victory/intermission; one fictional
-rifle (IR-7) with server-authoritative hitscan; HUD, deployment screen, objective markers,
-leaderstats scoreboard; unit tests for pure logic; offline build checks.
+## Phase 1 — playable vertical slice ✅
+Teams, spawning, one rifle with server-authoritative hit detection, three capture points, tickets and
+timer, HUD. (Commit 574921c.)
 
-## Phase 2 — Classes & deployment
-* `ClassConfig` (Assault, Medic, Engineer, Scout) with loadouts: Assault (IR-7 + grenade-style
-  concussion charge), Medic (compact SMG + healing kit: server-validated heal of nearby teammates, revive),
-  Engineer (carbine + repair tool for vehicles/cover, ammo crate), Scout (marksman rifle + spotting
-  that pings enemies on teammates' HUD).
-* Class selection in the deployment screen; `RequestClass` remote with validation and per-team caps.
-* Spawn selection: base or any objective your team owns and is not contested.
-* Custom Tab scoreboard grouped by team.
+## Milestone 1 — visual foundation ✅ (this change)
+Rebuilt Kestrel Valley:
+* noise- and feature-driven terrain with mountains, a river valley, a brook ravine, trenches, spires,
+  roads and mud
+* three distinct objective sites and two HQs
+* 15 outposts and automatic bridges
+* buildings with interiors, working stairs and roof access
+* five tree species with natural scatter
+* cinematic lighting (Future lighting, Atmosphere, Bloom, SunRays, colour grade) persisted through Rojo
+* the Studio bake workflow, plus runtime fallback and versioning
 
-## Phase 3 — Vehicles & destruction
-* Lightweight transport truck + light utility vehicle using `VehicleSeat` + `HingeConstraint`
-  wheels / `CylindricalConstraint` suspension; network ownership handed to the driver; server
-  validates seat entry, speed caps and respawns wrecked/abandoned vehicles at base depots.
-* Destructible predefined cover (`CollectionService` tag `Destructible`, `Health` attribute):
-  CombatService damages tagged parts; on zero health the server swaps in pre-split debris
-  (few parts, anchored after settle, cleaned up by timer) with a dust puff; no runtime CSG.
+Bug fixes:
+* The deploy screen showed mostly sky: the StreamingEnabled replication focus was wrong, and the
+  camera pitched too high.
+* The deploy UI was oversized; it is now a compact side panel.
+* Spawns now stream in before the character is placed, snap to the ground and use free pads.
+* Objective capture height is now measured relative to the real terrain.
+* Players out of bounds are now killed.
+* The old flat baseplate map and single-sphere trees have been replaced.
 
-## Phase 4 — Polish, persistence, accessibility
-* Minimap (ViewportFrame-free: 2D map image rendered from MapLayout data) and compass strip.
-* DataStore-backed `ProfileService`-style persistence (own implementation): XP, level, kills,
-  deaths, wins, captures, with session locking, retries and autosave.
-* Settings menu: sensitivity, FOV, colour-blind palettes (team colour + shape cues), reduced
-  camera shake/recoil, hitmarker size, HUD scale, subtitles for audio cues; stored per player.
-* Custom R6 animations (authored in Studio's Animation Editor, uploaded by the owner) for aim,
-  fire recoil and reload; sprint and crouch.
-* Performance: effect part pooling, LOD for distant trees (StreamingEnabled model modes), 80-player
-  load tests.
+## Milestone 2 — weapons & soldiers (next)
+* Five original weapons (standard rifle, compact carbine, support weapon, scout rifle, sidearm) built
+  as detailed multi-part models, with correct R6 grips.
+* Aim-down-sights, movement-dependent spread, equip, fire and reload animation integration (procedural
+  first, uploaded animations when available), and recoil as camera and animation.
+* Faction soldier kits: helmets, vests, backpacks, pouches, gloves, boots and cosmetic variants.
+* Animation controller: sprint, crouch and priority/transition handling.
+
+## Milestone 3 — SFX & VFX
+Pooled audio system (spatial, surface footsteps, ambience zones, mixing through SoundGroups) and
+pooled VFX: muzzle flash, tracers, surface-aware impacts, dust and mist, explosions. Quality scaling
+throughout.
+
+## Milestone 4 — UI & gameplay
+Main menu (Play / Team / Class / Loadout / Settings / Credits), deployment with class and
+spawn-point selection, redesigned HUD (minimap, compass, squad info, prompts), four classes with
+abilities, assists, and a custom scoreboard.
+
+## Milestone 5 — vehicles & polish
+Transport truck, armoured transport, utility vehicle (server-validated seats, damage, respawn),
+predefined destructible scenery, graphics presets (Low–Ultra), accessibility settings,
+DataStore-backed progression, and performance passes. 80-player support is only claimed after
+load testing.
