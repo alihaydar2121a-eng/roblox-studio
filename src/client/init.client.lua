@@ -4,12 +4,14 @@
 ]]
 
 local EffectsController = require(script.Controllers.EffectsController)
+local CharacterAnimator = require(script.Controllers.CharacterAnimator)
 local WeaponController = require(script.Controllers.WeaponController)
 local HudController = require(script.Controllers.HudController)
 local ObjectiveMarkers = require(script.Controllers.ObjectiveMarkers)
 local TeamSelectController = require(script.Controllers.TeamSelectController)
 
 EffectsController.start()
+CharacterAnimator.start()
 WeaponController.start()
 TeamSelectController.start()
 HudController.start()

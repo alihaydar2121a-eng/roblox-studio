@@ -133,7 +133,7 @@ function SpawnService.spawn(player)
 	end
 	warnIfNotR6(character)
 	player.ReplicationFocus = nil -- stream around the character again
-	UniformService.applyGear(character, teamConfig)
+	UniformService.applyGear(character, teamConfig, player)
 	character:PivotTo(spawnCf + Vector3.new(0, 3.2, 0))
 
 	local forceField = Instance.new("ForceField")

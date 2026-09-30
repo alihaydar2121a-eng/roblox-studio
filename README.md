@@ -24,13 +24,19 @@ primitives with built-in materials, and audio IDs are empty placeholders
 | Buildings with interiors, stairs, roof access, framed windows, pitched and vaulted roofs | ✅ |
 | 5 tree species, bushes, rocks, logs, puddles | ✅ |
 | Cinematic lighting persisted in Rojo; Studio bake plugin; runtime fallback | ✅ |
-| Phase 1 gameplay: teams, spawning, rifle, capture points, tickets, HUD | ✅ (from the previous commit) |
-| Weapons & soldiers, SFX/VFX, full UI and classes, vehicles and destruction | ⏳ Milestones 2–5, see [docs/ROADMAP.md](docs/ROADMAP.md) |
+| **Milestone 2 — soldiers, weapons, animation** | ✅ Implemented and verified offline. Needs a Studio pass (see the checklist) |
+| Faction kits, 5 weapons (Blender FBX/GLB + in-game fallback), procedural R6 animation, first-person viewmodel with aim-down-sights | ✅, see [docs/ASSET_PIPELINE.md](docs/ASSET_PIPELINE.md) |
+| Phase 1 gameplay: teams, spawning, capture points, tickets, HUD | ✅ |
+| SFX/VFX, full UI and classes, vehicles and destruction | ⏳ Milestones 3–5, see [docs/ROADMAP.md](docs/ROADMAP.md) |
 
 > **Honesty note:** the code is syntax-checked and unit-tested, the whole map generator is executed
 > offline under Lune with real Roblox datatypes, and the place and plugin build with Rojo. None of it
 > has been run inside Roblox Studio by the author yet. Please work through
 > [docs/STUDIO_VALIDATION.md](docs/STUDIO_VALIDATION.md).
+
+| Soldiers (Blender render) | Weapons (Blender render) |
+|---|---|
+| ![](assets/previews/soldiers_front.png) | ![](assets/previews/weapons_lineup.png) |
 
 | Millbrook | Fort Harlow | Kessler Works |
 |---|---|---|
@@ -112,10 +118,13 @@ Skipping step 5 still works: the server generates the map at startup (see
 `rojo build default.project.json -o OperationIronfront.rbxlx`, open it, then do steps 3, 5 and 6.
 
 ## Controls
-* **PC:** WASD move, mouse aim (over-the-shoulder, cursor locked while armed), LMB fire, R reload,
-  hold Left Alt to free the cursor, Tab player list/scoreboard, M change team while redeploying.
-* **Gamepad:** R2 fire, X reload.
-* **Mobile:** thumbstick move, drag to aim (screen centre), on-screen FIRE and R buttons.
+* **PC:**
+  * WASD move, mouse aim (over-the-shoulder), LMB fire, RMB aim down sights, R reload.
+  * 1/2 or Q switch weapon, Shift sprint, C or Ctrl crouch.
+  * Alt frees the cursor, Tab shows the scoreboard, M changes team while redeploying.
+* **Gamepad:** R2 fire, L2 aim, X reload, Y switch, L3 sprint, B crouch.
+* **Mobile:** thumbstick move, drag to aim (screen centre), on-screen FIRE, AIM, R, SWAP, RUN and
+  CRCH buttons. AIM, RUN and CRCH are toggles.
 
 ## Development checks
 ```

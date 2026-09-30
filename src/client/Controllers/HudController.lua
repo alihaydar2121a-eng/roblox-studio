@@ -454,9 +454,10 @@ local function updateFrame()
 
 	local weapon = WeaponController.getWeapon()
 	refs.ammo.Visible = alive and weapon ~= nil
-	refs.crosshair.Visible = alive and weapon ~= nil
+	refs.crosshair.Visible = alive and weapon ~= nil and not WeaponController.getState().aiming
 	if weapon then
-		refs.weaponName.Text = weapon.DisplayName
+		local slot = weapon.Slot == "Primary" and "1" or "2"
+		refs.weaponName.Text = ("[%s] %s  ·  %s"):format(slot, weapon.DisplayName, string.upper(weapon.Class))
 		if player:GetAttribute("Reloading") then
 			refs.ammoText.Text = "RELOADING"
 		else

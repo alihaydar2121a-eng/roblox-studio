@@ -17,6 +17,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local GameConfig = require(Shared.Config.GameConfig)
 local MapLayout = require(Shared.Config.MapLayout)
 local Remotes = require(Shared.Net.Remotes)
+local WeaponConfig = require(Shared.Config.WeaponConfig)
 
 local Ui = require(script.Parent.Parent.UI.Ui)
 local Theme = require(script.Parent.Parent.UI.Theme)
@@ -205,8 +206,37 @@ local function build()
 		request("Auto")
 	end)
 
+	-- Primary weapon picker (applies on the next deployment; sidearm is always carried).
+	Ui.label({ LayoutOrder = 11, Size = UDim2.new(1, 0, 0, 16), Text = "PRIMARY WEAPON", TextSize = 12, TextColor3 = Theme.Muted, TextXAlignment = Enum.TextXAlignment.Left, Parent = panel })
+	local grid = Ui.new("Frame", { LayoutOrder = 12, Size = UDim2.new(1, 0, 0, 104), BackgroundTransparency = 1, Parent = panel }, {
+		Ui.new("UIGridLayout", { CellSize = UDim2.new(0.5, -4, 0, 48), CellPadding = UDim2.fromOffset(8, 8), SortOrder = Enum.SortOrder.LayoutOrder }),
+	})
+	local buttons = {}
+	local function refreshPick()
+		local chosen = player:GetAttribute("NextPrimary") or WeaponConfig.DefaultPrimary
+		for id, b in pairs(buttons) do
+			b.stroke.Transparency = id == chosen and 0 or 0.8
+			b.button.BackgroundColor3 = id == chosen and Color3.fromRGB(52, 58, 50) or Color3.fromRGB(30, 33, 36)
+		end
+	end
+	for index, id in ipairs(WeaponConfig.Primaries) do
+		local def = WeaponConfig.get(id)
+		local stroke = Ui.stroke(Theme.Warning, 1, 0.8)
+		local button = Ui.new("TextButton", {
+			LayoutOrder = index, BackgroundColor3 = Color3.fromRGB(30, 33, 36), AutoButtonColor = true, Text = "", Parent = grid,
+		}, { Ui.corner(6), stroke })
+		Ui.label({ Position = UDim2.fromOffset(10, 6), Size = UDim2.new(1, -20, 0, 18), Text = def.DisplayName, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Left, Parent = button })
+		Ui.label({ Position = UDim2.fromOffset(10, 25), Size = UDim2.new(1, -20, 0, 16), Text = string.upper(def.Class), TextSize = 11, Font = Enum.Font.GothamMedium, TextColor3 = Theme.Muted, TextXAlignment = Enum.TextXAlignment.Left, Parent = button })
+		buttons[id] = { button = button, stroke = stroke }
+		button.Activated:Connect(function()
+			Remotes.get("SetLoadout"):FireServer(id)
+		end)
+	end
+	player:GetAttributeChangedSignal("NextPrimary"):Connect(refreshPick)
+	refreshPick()
+
 	status = Ui.label({
-		LayoutOrder = 11, Size = UDim2.new(1, 0, 0, 18), Text = "", TextSize = 13, Font = Enum.Font.GothamMedium,
+		LayoutOrder = 13, Size = UDim2.new(1, 0, 0, 18), Text = "", TextSize = 13, Font = Enum.Font.GothamMedium,
 		TextColor3 = Theme.Warning, TextXAlignment = Enum.TextXAlignment.Left, Parent = panel,
 	})
 	Ui.label({

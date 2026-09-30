@@ -3,7 +3,8 @@
 #   1. Luau syntax for every source/test file
 #   2. Unit tests (pure game logic + world planning/heightfield)
 #   3. Full map-generation harness under Lune (real Roblox datatypes)
-#   4. Rojo builds of the place and the Studio plugin
+#   4. Weapon/gear/pose harness under Lune; Blender export verification if bpy exists
+#   5. Rojo builds of the place and the Studio plugin
 # Needs luau + luau-compile + rojo (+ lune for step 3) on PATH, or TOOLS_DIR.
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -27,8 +28,17 @@ echo "== Unit tests: world planning + heightfield"
 if command -v "${T}lune" >/dev/null 2>&1; then
 	echo "== Map generation harness (Lune)"
 	"${T}lune" run tests/harness.luau
+	echo "== Weapon / gear / pose harness (Lune)"
+	"${T}lune" run tests/assets.luau
 else
 	echo "== Map generation harness skipped (lune not installed)"
+fi
+
+if python3 -c "import bpy" >/dev/null 2>&1; then
+	echo "== Blender export verification (re-import FBX/GLB)"
+	python3 scripts/blender/verify_exports.py | tail -1
+else
+	echo "== Blender export verification skipped (bpy not installed)"
 fi
 
 echo "== Rojo build"

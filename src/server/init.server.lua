@@ -31,6 +31,12 @@ if not ok then
 	GameState.set("MapStatus", "Failed")
 	error("[Ironfront] battlefield generation failed: " .. tostring(meta))
 end
+-- Publish the measured WedgePart orientation for client-side gear/weapon builders.
+local Kit = require(script.World.Kit)
+if not Kit.orientation.calibrated then
+	Kit.calibrate(require(script.World.Env))
+end
+GameState.set("WedgeRise", Kit.orientation.wedgeRise)
 print(("[Ironfront] battlefield ready (%s) in %.1fs"):format(source, os.clock() - started))
 GameState.set("MapStatus", "Ready")
 

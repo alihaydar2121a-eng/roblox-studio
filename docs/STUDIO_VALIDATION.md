@@ -6,6 +6,49 @@ and types are checked, terrain write dimensions validated, and structures verifi
 ground. None of it has been run inside Roblox Studio by the author. Check the items below in Studio
 (Test → Clients and Servers, 2+ players) and tick them off.
 
+## Milestone 2 — soldiers, weapons, animation
+Run it in Studio with 2+ players (Test → Clients and Servers) so you see both your own character and
+others.
+- [ ] **Joints:** Output has no `[CharacterAnimator]` warnings. The characters are not T-posing or
+      frozen, which would mean the stub `Animate` script failed to replace the default one.
+- [ ] **Soldier kits:** Ashford soldiers wear the olive helmet, plate carrier, rucksack, tan gloves
+      and brown boots. Varn soldiers wear the angular dark helmet, blue-grey rig, radio pack and black
+      gloves and boots.
+  - Gear moves with the limbs while walking and never floats.
+  - Shots still register on the body; gear is non-queryable.
+- [ ] **Walking:**
+  - idle has a visible breathing bob;
+  - walking and running swing the legs;
+  - Shift sprint leans forward, lowers the weapon and raises speed and FOV;
+  - C (or Ctrl) crouch kneels, slows you down and tightens spread;
+  - jump, fall and landing poses play.
+- [ ] **Weapons:** the KR-20 (default), KC-9, MG-44, SR-3 and P-11 (key 2).
+  - The barrel points forward and the right hand is on the pistol grip.
+  - The left hand is under the handguard. R6 arms are rigid, so it may sit short of the foregrip on
+    long rifles.
+- [ ] **Equip and switch:** 1 and 2 (or Q) switch with a raise animation, and you can't fire until
+      the weapon is up. Other players see your weapon change.
+- [ ] **Aiming:** RMB goes to first person with a smooth move to the sights.
+  - KR-20, KC-9 and MG-44 show a red-dot reticle and hide the optic model.
+  - The SR-3 shows the black scope overlay at high zoom.
+  - The P-11 aims down its iron sights.
+- [ ] **Firing:** recoil kicks the camera and viewmodel. A flash and tracer come from the muzzle in
+      first and third person, and other players see your character's recoil.
+- [ ] **Reload:** R reloads. The weapon tilts, the magazine disappears and returns, and the left hand
+      goes down and back. Other players see this too. Ammo updates.
+- [ ] **Viewmodel:** zoom fully in with the mouse wheel (or aim).
+  - Sleeve and glove arms are in your faction colours.
+  - Sway on mouse turn and bob while walking look right.
+  - Walk into a wall: the weapon pulls back instead of clipping through.
+  - Die and respawn: no leftover viewmodel.
+- [ ] **Loadout:** the deploy panel's "Primary weapon" picker changes your primary on the next
+      deployment.
+- [ ] **Mobile emulator:** FIRE, AIM, R, SWAP, RUN and CRCH touch buttons all work. AIM, RUN and
+      CRCH are toggles.
+- [ ] **Optional imported meshes** (docs/ASSET_PIPELINE.md): after importing, the weapon model's
+      `AssetSource` attribute reads `imported`, and the bevelled meshes appear in both first and
+      third person.
+
 ## Milestone 1 — map bake & visuals
 - [ ] **Bake:** Ironfront → Bake Map (Edit mode) completes without errors. Output lists
       `wedge calibration: … measured=true`. If it says `measured=false`, check one gable roof and one

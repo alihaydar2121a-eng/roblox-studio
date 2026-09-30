@@ -24,15 +24,23 @@ Bug fixes:
 * Players out of bounds are now killed.
 * The old flat baseplate map and single-sphere trees have been replaced.
 
-## Milestone 2 — weapons & soldiers (next)
-* Five original weapons (standard rifle, compact carbine, support weapon, scout rifle, sidearm) built
-  as detailed multi-part models, with correct R6 grips.
-* Aim-down-sights, movement-dependent spread, equip, fire and reload animation integration (procedural
-  first, uploaded animations when available), and recoil as camera and animation.
-* Faction soldier kits: helmets, vests, backpacks, pouches, gloves, boots and cosmetic variants.
-* Animation controller: sprint, crouch and priority/transition handling.
+## Milestone 2 — weapons & soldiers ✅ (implemented; Studio validation pending)
+* Five original weapons (KR-20 rifle, KC-9 carbine, MG-44 support weapon, SR-3 scout rifle, P-11
+  sidearm):
+  * one set of shared specs drives both the Blender FBX/GLB meshes and the in-game primitive
+    fallback;
+  * primary plus sidearm loadout with per-weapon ammo, server-validated switching, and a loadout
+    picker.
+* Faction soldier kits (helmets, vests, packs, pouches, gloves, boots, camo patches, variants),
+  welded to R6 limbs.
+* Procedural R6 animation: locomotion, crouch and air states, equip/aim/fire/reload, and
+  pitch-following weapon holds.
+* First-person viewmodel with aim-down-sights, reticles and a scope overlay, sway, bob, recoil and
+  wall push-back.
+* Sprint and crouch stances with server-authoritative speeds, and movement-dependent spread.
+* See docs/ASSET_PIPELINE.md for the Blender → Studio import steps.
 
-## Milestone 3 — SFX & VFX
+## Milestone 3 — SFX & VFX (next)
 Pooled audio system (spatial, surface footsteps, ambience zones, mixing through SoundGroups) and
 pooled VFX: muzzle flash, tracers, surface-aware impacts, dust and mist, explosions. Quality scaling
 throughout.

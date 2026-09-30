@@ -64,19 +64,31 @@ function EffectsController.impact(position)
 	Debris:AddItem(puff, 0.4)
 end
 
-function EffectsController.muzzleFlash(tool)
-	local handle = tool and tool:FindFirstChild("Handle")
-	local muzzle = handle and handle:FindFirstChild("Muzzle")
-	if not muzzle then
-		return nil
-	end
+-- Brief muzzle light + small flash sprite at a world position.
+function EffectsController.flashAt(position)
+	local flash = fxPart({
+		Shape = Enum.PartType.Ball,
+		Size = Vector3.new(0.5, 0.5, 0.5),
+		CFrame = CFrame.new(position),
+		Material = Enum.Material.Neon,
+		Color = Color3.fromRGB(255, 214, 150),
+		Transparency = 0.25,
+	})
 	local light = Instance.new("PointLight")
-	light.Brightness = 3
-	light.Range = 8
+	light.Brightness = 2.5
+	light.Range = 9
 	light.Color = Color3.fromRGB(255, 210, 150)
-	light.Parent = muzzle
-	Debris:AddItem(light, 0.05)
-	return muzzle.WorldPosition
+	light.Parent = flash
+	TweenService:Create(flash, TweenInfo.new(0.05), { Size = Vector3.new(0.9, 0.9, 0.9), Transparency = 1 }):Play()
+	Debris:AddItem(flash, 0.06)
+end
+
+-- Muzzle position of a character's third-person weapon (nil if none).
+function EffectsController.muzzleOf(character)
+	local model = character and character:FindFirstChild("WeaponModel")
+	local handle = model and model:FindFirstChild("Handle")
+	local muzzle = handle and handle:FindFirstChild("Muzzle")
+	return muzzle and muzzle.WorldPosition or nil
 end
 
 function EffectsController.start()
@@ -92,15 +104,13 @@ function EffectsController.start()
 		if (camera.CFrame.Position - origin).Magnitude > MAX_REMOTE_TRACER_DISTANCE then
 			return
 		end
-		local start = origin
 		local character = shooter and shooter.Character
-		local tool = character and character:FindFirstChildOfClass("Tool")
-		if tool then
-			start = EffectsController.muzzleFlash(tool) or origin
-		end
+		local start = EffectsController.muzzleOf(character) or origin
+		EffectsController.flashAt(start)
 		EffectsController.tracer(start, hitPosition)
 		EffectsController.impact(hitPosition)
-		SoundPlayer.play("Shot", origin)
+		local model = character and character:FindFirstChild("WeaponModel")
+		SoundPlayer.play("Shot_" .. tostring(model and model:GetAttribute("WeaponId")), origin)
 	end)
 end
 

@@ -17,6 +17,9 @@ Remotes.Definitions = {
 	RequestTeam = "RemoteEvent", -- C->S (teamId | "Auto")
 	Fire = "RemoteEvent", -- C->S { o = Vector3 origin, d = Vector3 unit direction }
 	Reload = "RemoteEvent", -- C->S ()
+	EquipWeapon = "RemoteEvent", -- C->S ("Primary" | "Secondary")
+	SetStance = "RemoteEvent", -- C->S { sprint, crouch, aim, pitch }
+	SetLoadout = "RemoteEvent", -- C->S (primary weapon id), applies next spawn
 	HitConfirm = "RemoteEvent", -- S->C { headshot, killed }
 	DamageTaken = "RemoteEvent", -- S->C { from = Vector3, amount }
 	KillFeed = "RemoteEvent", -- S->C { killer, victim, weapon, headshot, killerTeam, victimTeam }

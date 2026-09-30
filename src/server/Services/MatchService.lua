@@ -90,13 +90,9 @@ local function endRound(winner)
 	for _, player in ipairs(Players:GetPlayers()) do
 		local character = player.Character
 		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+		CombatService.disarm(player)
 		if humanoid then
-			humanoid:UnequipTools()
 			humanoid.WalkSpeed = 0
-		end
-		local backpack = player:FindFirstChildOfClass("Backpack")
-		if backpack then
-			backpack:ClearAllChildren()
 		end
 		player:SetAttribute("RespawnAt", nil)
 	end
