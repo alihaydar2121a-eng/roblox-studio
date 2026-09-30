@@ -1,0 +1,15 @@
+name: check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install luau + rojo
+        run: |
+          mkdir -p tools && cd tools
+          curl -sSLo luau.zip https://github.com/luau-lang/luau/releases/latest/download/luau-ubuntu.zip && unzip -q luau.zip
+          curl -sSLo rojo.zip https://github.com/rojo-rbx/rojo/releases/download/v7.4.4/rojo-7.4.4-linux-x86_64.zip && unzip -q rojo.zip
+          chmod +x luau luau-compile rojo
+      - name: Run checks
+        run: TOOLS_DIR=$PWD/tools ./scripts/check.sh
