@@ -147,10 +147,18 @@ local function lerp(a, b, t)
 	return a:Lerp(b, math.clamp(t, 0, 1))
 end
 
+-- Bladed shooting stance: the torso turns so the support shoulder leads.
+PoseLibrary.BladeYaw = { Rifle = -0.42, Pistol = -0.18 }
+
+function PoseLibrary.bladeYaw(pose, sprint)
+	return (PoseLibrary.BladeYaw[pose] or 0) * (1 - 0.8 * (sprint or 0))
+end
+
 --[[
 	weaponHold(w) -> handle CFrame in Torso space
 	w: { pose ("Rifle"|"Pistol"), aim (0..1), sprint (0..1), reload (0..1 phase or nil),
-	     equip (0..1, 1 = fully equipped), recoil (0..1), pitch (radians) }
+	     equip (0..1, 1 = fully equipped), recoil (0..1), pitch (radians),
+	     blade (torso yaw to counter, radians), time, moving (0..1), phase }
 ]]
 function PoseLibrary.weaponHold(w)
 	local set = HOLDS[w.pose] or HOLDS.Rifle
@@ -168,22 +176,47 @@ function PoseLibrary.weaponHold(w)
 	if w.recoil and w.recoil > 0 then
 		cf *= CF(0, 0.02 * w.recoil, 0.28 * w.recoil) * rx(0.12 * w.recoil)
 	end
+	-- Breathing sway at rest, bob while walking (reduced when aiming).
+	local t = w.time or 0
+	local calm = 1 - 0.6 * w.aim
+	local moving = w.moving or 0
+	local ph = w.phase or 0
+	cf = CF(math.sin(ph) * 0.03 * moving * calm, math.abs(math.cos(ph)) * -0.04 * moving * calm + math.sin(t * 1.4) * 0.012 * calm, 0)
+		* cf * rx(math.sin(t * 1.4 + 0.6) * 0.008 * calm) * ry(math.sin(t * 0.9) * 0.01 * calm)
+	-- Counter the bladed torso so the muzzle stays on the aim line.
+	if w.blade and w.blade ~= 0 then
+		cf = ry(-w.blade) * cf
+	end
 	return cf
 end
 
--- Left hand target during a reload: to the magazine, down to the belt, back.
-function PoseLibrary.reloadHand(hold, magPoint, supportPoint, t, belt)
+--[[
+	Left hand target during a reload (keyframed path):
+	  0.00–0.18 support → magazine      0.18–0.40 pull mag down to the belt pouch
+	  0.40–0.62 fresh mag up to the well 0.62–0.82 hand to the charging handle
+	  0.82–1.00 back to the support grip
+	chargePoint is optional (pistols rack the slide at the rear sight instead).
+]]
+local function ease(x)
+	x = math.clamp(x, 0, 1)
+	return x * x * (3 - 2 * x)
+end
+
+function PoseLibrary.reloadHand(hold, magPoint, supportPoint, t, belt, chargePoint)
 	local mag = hold * magPoint
 	local support = hold * supportPoint
-	belt = belt or V3(-0.6, -0.7, -0.7) -- Torso space default
-	if t < 0.25 then
-		return support:Lerp(mag, t / 0.25)
-	elseif t < 0.5 then
-		return mag:Lerp(belt, (t - 0.25) / 0.25)
-	elseif t < 0.75 then
-		return belt:Lerp(mag, (t - 0.5) / 0.25)
+	belt = belt or V3(-0.55, -0.75, -0.75) -- Torso space default
+	local charge = hold * (chargePoint or V3(0, 0.5, 0.25))
+	if t < 0.18 then
+		return support:Lerp(mag, ease(t / 0.18))
+	elseif t < 0.4 then
+		return mag:Lerp(belt, ease((t - 0.18) / 0.22))
+	elseif t < 0.62 then
+		return belt:Lerp(mag, ease((t - 0.4) / 0.22))
+	elseif t < 0.82 then
+		return mag:Lerp(charge, ease((t - 0.62) / 0.2))
 	end
-	return mag:Lerp(support, (t - 0.75) / 0.25)
+	return charge:Lerp(support, ease((t - 0.82) / 0.18))
 end
 
 return PoseLibrary

@@ -41,6 +41,9 @@ for kind in ("weapons", "gear"):
             size = hi - lo
             names = sorted(o.name.split(".")[0] for o in bpy.context.scene.objects if o.type == "MESH")
             ok = set(entry["objects"]) <= set(names)
+            # Baked atlas must travel inside the file (FBX embeds, GLB packs).
+            textured = any(img.size[0] > 0 for img in bpy.data.images)
+            ok = ok and (textured or "textures" not in entry)
             if kind == "weapons":
                 expected = entry["size_studs"]  # roblox x, y, z
                 got = [size.x, size.z, size.y]

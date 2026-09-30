@@ -156,17 +156,23 @@ local function step(rig, dt, now)
 		phase = rig.phase, speed = speed, stance = st.stance, air = air, land = rig.land,
 		time = now, pitch = rig.pitch,
 	})
+	-- Bladed stance while holding a weapon (torso turns, head and hips counter-turn).
+	local heldModel = character:FindFirstChild("WeaponModel")
+	local heldWeapon = heldModel and WeaponConfig.get(heldModel:GetAttribute("WeaponId"))
+	local bladeTarget = heldWeapon and PoseLibrary.bladeYaw(heldWeapon.Pose, st.stance == "Sprint" and 1 or 0) or 0
+	rig.blade = (rig.blade or 0) + (bladeTarget - (rig.blade or 0)) * alpha
+	local blade = rig.blade
 	local rj = rig.rootJoint
-	rj.Transform = PoseLibrary.toTransform(rj.C0, rj.C1, blend(rig, "root", loco.root, alpha))
+	rj.Transform = PoseLibrary.toTransform(rj.C0, rj.C1, blend(rig, "root", loco.root * CFrame.Angles(0, blade, 0), alpha))
 	for _, hip in ipairs({ "Right Hip", "Left Hip" }) do
 		local m = rig.motors[hip]
 		if m then
-			m.Transform = PoseLibrary.toTransform(m.C0, m.C1, blend(rig, hip, PoseLibrary.limb(hip, loco[hip]), alpha))
+			m.Transform = PoseLibrary.toTransform(m.C0, m.C1, blend(rig, hip, PoseLibrary.limb(hip, CFrame.Angles(0, -blade, 0) * loco[hip]), alpha))
 		end
 	end
 	local neck = rig.motors["Neck"]
 	if neck then
-		neck.Transform = PoseLibrary.toTransform(neck.C0, neck.C1, blend(rig, "Neck", PoseLibrary.limb("Neck", loco.neck), alpha))
+		neck.Transform = PoseLibrary.toTransform(neck.C0, neck.C1, blend(rig, "Neck", PoseLibrary.limb("Neck", CFrame.Angles(0, -blade, 0) * loco.neck), alpha))
 	end
 
 	-- Upper body: weapon hold with arms solved onto the grip and support points.
@@ -197,19 +203,21 @@ local function step(rig, dt, now)
 
 		local hold = PoseLibrary.weaponHold({
 			pose = weapon.Pose, aim = rig.aim, sprint = rig.sprint, reload = reload, equip = equip,
-			recoil = rig.recoil, pitch = rig.pitch,
+			recoil = rig.recoil, pitch = rig.pitch, blade = blade, time = now,
+			moving = math.clamp(speed / 12, 0, 1), phase = rig.phase,
 		})
 		joint.Transform = joint.C0:Inverse() * hold
 		local grip = hold.Position
 		local support = hold * v3(spec.Points.Support)
 		if reload then
-			support = PoseLibrary.reloadHand(hold, magPoint(weaponId), v3(spec.Points.Support), reload)
+			local charge = weapon.Pose == "Pistol" and Vector3.new(0, 0.34, 0.15) or Vector3.new(0, 0.52, 0.3)
+			support = PoseLibrary.reloadHand(hold, magPoint(weaponId), v3(spec.Points.Support), reload, nil, charge)
 		end
 		rs.Transform = PoseLibrary.toTransform(rs.C0, rs.C1, blend(rig, "rs", PoseLibrary.armTo("Right Shoulder", grip), alpha * 1.6))
 		ls.Transform = PoseLibrary.toTransform(ls.C0, ls.C1, blend(rig, "ls", PoseLibrary.armTo("Left Shoulder", support), alpha * 1.6))
 
 		-- Magazine leaves the weapon mid-reload (local, cosmetic only).
-		local hideMag = reload ~= nil and reload > 0.3 and reload < 0.72
+		local hideMag = reload ~= nil and reload > 0.22 and reload < 0.5
 		if rig.magHidden ~= hideMag then
 			rig.magHidden = hideMag
 			for _, part in ipairs(model:GetDescendants()) do

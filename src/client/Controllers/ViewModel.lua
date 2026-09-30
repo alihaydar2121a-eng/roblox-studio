@@ -22,6 +22,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local WeaponConfig = require(Shared.Config.WeaponConfig)
 local GearModels = require(Shared.Config.GearModels)
 local WeaponRig = require(Shared.Assets.WeaponRig)
+local ModelBuilder = require(Shared.Assets.ModelBuilder)
 local PoseLibrary = require(Shared.Animation.PoseLibrary)
 
 local ViewModel = {}
@@ -120,6 +121,37 @@ local function armPart(folder, color, material, name)
 	return p
 end
 
+-- Premium arm (Gear/<Team>/Arm|Arm_L) as anchored parts with offsets from its
+-- Origin (the R6 limb centre). Variant pieces are skipped. Returns nil if absent.
+local HAND_Y = 0.84 -- fist centre below the limb centre
+local function importedArm(folder, teamId, piece)
+	local template = ModelBuilder.findImported("Gear", teamId, piece)
+	if not template then
+		return nil
+	end
+	local clone = template:Clone()
+	local origin = clone:FindFirstChild("Origin", true)
+	local pivot = origin and origin:IsA("BasePart") and origin.CFrame or clone:GetPivot()
+	local parts, offsets = {}, {}
+	for _, d in ipairs(clone:GetDescendants()) do
+		if d:IsA("BasePart") and d ~= origin and not d.Name:match("_v_%w+$") then
+			table.insert(offsets, pivot:ToObjectSpace(d.CFrame))
+			d.Anchored = true
+			d.CanCollide = false
+			d.CanQuery = false
+			d.CanTouch = false
+			d.CastShadow = false
+			d.Parent = folder
+			table.insert(parts, d)
+		end
+	end
+	clone:Destroy()
+	if #parts == 0 then
+		return nil
+	end
+	return { parts = parts, offsets = offsets }
+end
+
 function ViewModel.destroy()
 	if current then
 		current.folder:Destroy()
@@ -161,6 +193,11 @@ function ViewModel.equip(weaponId)
 	local kit = GearModels[teamId] or GearModels.Alpha
 	local arms = {}
 	for _, side in ipairs({ "Right", "Left" }) do
+		local mesh = importedArm(folder, teamId, side == "Right" and "Arm" or "Arm_L")
+		if mesh then
+			arms[side] = { mesh = mesh }
+			continue
+		end
 		arms[side] = {
 			sleeve = armPart(folder, rgb(kit.Uniform.Arms), Enum.Material.Fabric, side .. "Sleeve"),
 			cuff = armPart(folder, rgb(kit.Palette.cloth), Enum.Material.Fabric, side .. "Cuff"),
@@ -202,6 +239,16 @@ local function placeArm(arm, shoulder, hand)
 		return
 	end
 	local frame = CFrame.lookAt(shoulder, hand)
+	if arm.mesh then
+		-- Limb -Y runs shoulder -> hand; rotate it onto the look axis and put the fist on the hand point.
+		local limb = frame * CFrame.new(0, 0, -(len - HAND_Y)) * CFrame.Angles(math.pi / 2, 0, 0)
+		local frames = table.create(#arm.mesh.parts)
+		for i, o in ipairs(arm.mesh.offsets) do
+			frames[i] = limb * o
+		end
+		workspace:BulkMoveTo(arm.mesh.parts, frames, Enum.BulkMoveMode.FireCFrameChanged)
+		return
+	end
 	local sleeveLen = math.max(0.1, len - 0.45)
 	arm.sleeve.Size = Vector3.new(0.52, 0.52, sleeveLen)
 	arm.sleeve.CFrame = frame * CFrame.new(0, 0, -sleeveLen / 2)
@@ -298,7 +345,7 @@ function ViewModel.update(dt, s)
 
 	-- Hide optic geometry at full aim (reticle overlay takes over).
 	WeaponRig.setGroupVisible(rig, "optic", aim < 0.9)
-	local hideMag = s.reload ~= nil and s.reload > 0.3 and s.reload < 0.72
+	local hideMag = s.reload ~= nil and s.reload > 0.22 and s.reload < 0.5
 	if hideMag ~= current.magHidden then
 		current.magHidden = hideMag
 		WeaponRig.setGroupVisible(rig, "mag", not hideMag)

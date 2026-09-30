@@ -231,7 +231,12 @@ for _, id in ipairs(WeaponModels.Ids) do
 	local spec = WeaponModels.get(id)
 	for _, aim in ipairs({ 0, 1 }) do
 		for _, pitch in ipairs({ -0.8, 0, 0.8 }) do
-			local hold = PoseLibrary.weaponHold({ pose = w.Pose, aim = aim, sprint = 0, equip = 1, recoil = 0, pitch = pitch })
+			local blade = PoseLibrary.bladeYaw(w.Pose, 0)
+			local hold = PoseLibrary.weaponHold({ pose = w.Pose, aim = aim, sprint = 0, equip = 1, recoil = 0, pitch = pitch, blade = blade })
+			-- The muzzle must still point along the aim line in HRP space despite the torso yaw.
+			local world = CFrame.Angles(0, blade, 0) * hold
+			local expected = Vector3.new(0, math.sin(pitch), -math.cos(pitch))
+			check(world.LookVector:Dot(expected) > 0.97, ("%s muzzle off aim (aim=%d pitch=%.1f): %.3f"):format(id, aim, pitch, world.LookVector:Dot(expected)))
 			local grip = hold.Position
 			local support = hold * Vector3.new(table.unpack(spec.Points.Support))
 			local rArm = PoseLibrary.armTo("Right Shoulder", grip)
@@ -245,7 +250,7 @@ for _, id in ipairs(WeaponModels.Ids) do
 end
 print(("  worst hand-to-grip gap: right %.2f studs, left %.2f studs (R6 arms are rigid 2-stud limbs)"):format(worstRight, worstLeft))
 check(worstRight < 0.35, "right hand misses the grip")
-check(worstLeft < 1.4, "left hand far from support point")
+check(worstLeft < 0.9, "left hand far from support point")
 
 -- Locomotion outputs are finite across states.
 for _, stance in ipairs({ "Stand", "Sprint", "Crouch" }) do

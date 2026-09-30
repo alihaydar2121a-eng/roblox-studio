@@ -88,6 +88,10 @@ function UniformService.applyGear(character, teamConfig, player)
 			end
 			if built then
 				sources.imported = true
+				-- Premium body meshes replace the blocky limb; the R6 part stays as the hitbox.
+				if limb.Part ~= "Head" and anchor:IsA("BasePart") then
+					anchor.Transparency = 1
+				end
 			else
 				ModelBuilder.build(kit[limb.Piece], {
 					anchor = anchor, parent = folder, palette = kit.Palette, materials = GearModels.Materials,

@@ -1,78 +1,106 @@
 # Soldiers, weapons & animation — asset pipeline
 
 ```
-src/shared/Config/WeaponModels.lua ┐   single source of truth (primitive specs)
-src/shared/Config/GearModels.lua   ┘
-        │ lune run tests/assets.luau        → assets/specs/asset_specs.json
+scripts/blender/ironfront/        modelling library (Blender 4.2 bpy)
+  geo.py      lofts, lathes, extrusions, shells, straps, booleans, bevels, weighted normals
+  mats.py     procedural PBR materials (grain, camo, edge wear, AO) + atlas baking
+  weapons.py  KR-20, KC-9, RG-7, LX-3, P-11 builders (grip = origin)
+  soldiers.py Ashford Coalition + Varn Directorate bodies and kit, per R6 limb
+        │
+scripts/blender/build_assets.py   → bakes one 1024² atlas per asset (Color/Roughness/Metalness)
+        │                            → assets/export/{weapons,gear}/<asset>.fbx|.glb (+ PNGs)
+        │                            → assets/export/manifest.json
+scripts/blender/verify_exports.py → re-imports every file: size, axes, names, embedded texture
+scripts/blender/render_previews.py→ assets/previews/*.png rendered from the exported GLBs
+scripts/blender/qc_weapon.py / qc_soldier.py → multi-angle QC renders of the source scenes
         ▼
-scripts/blender/build_assets.py (Blender 4.2) → assets/export/{weapons,gear}/*.fbx|.glb
-        │                                      + assets/export/manifest.json
-        │                                      + assets/previews/*.png (Cycles)
+Roblox Studio 3D Importer → Models of textured MeshParts
         ▼
-Roblox Studio 3D Importer  → Models of MeshParts
+ReplicatedStorage.ImportedAssets.{Weapons,Gear}   (saved in the place file)
         ▼
-ReplicatedStorage.ImportedAssets.{Weapons,Gear}  (saved in the place file)
-        ▼
-Shared.Assets.ModelBuilder / WeaponRig pick them up at runtime.
-Missing or broken imports fall back to the primitive builds automatically.
+ModelBuilder / WeaponRig / UniformService / ViewModel use them at runtime.
+Missing or broken imports fall back to the primitive specs
+(src/shared/Config/WeaponModels.lua, GearModels.lua) automatically.
 ```
 
-**What exists in the repository today**
-* **Meshes:** real, generated here with Blender 4.2 (`bpy`). All files are committed under
-  `assets/export/`.
-  * 5 weapons: AR, CB, LMG, SR and P11, as `.fbx` and `.glb`.
-  * 12 gear meshes: `Alpha_*` and `Bravo_*` for Head, Torso, Arm, Arm_L, Leg and Leg_L.
-  * `scripts/blender/verify_exports.py` re-imports every file and checks sizes, axes and object
-    names. It currently reports 34 of 34 ok.
-* **Previews:** Cycles renders of these meshes in `assets/previews/`.
-* **Not uploaded to Roblox.** Rojo cannot import FBX or create MeshParts, and uploading needs your
-  account. Until you import them, the game uses the primitive fallback built from the same specs, so
-  the look matches minus the bevels.
+**What is in the repository**
+* **Meshes:** modelled in code with Blender 4.2 and committed under `assets/export/`. There are no
+  box-and-cylinder primitives.
+  * Weapons use lathed barrels, brakes and scopes. They have lofted magazines with curvature,
+    extruded receiver profiles with bevels, a finger-grooved grip, rail slots cut by boolean, and
+    vents.
+  * Soldiers have lofted and tapered bodies, gloved fists and boots with tread.
+  * Soldier kit is shaped: plates, pouches with magazines, straps, helmets, radios and packs.
+  * Triangle budgets:
+    * Weapons: about 1.7k (P-11) to 6.5k (AR).
+    * Soldiers: about 15–16k for a full faction kit across 6 pieces.
+* **Textures:** each asset bakes one atlas: `<asset>_Color.png`, `_Roughness.png` and
+  `_Metalness.png`.
+  * The atlas includes camo, grain, edge wear and ambient occlusion.
+  * The FBX embeds the atlas and the GLB packs it.
+* **Previews:** `assets/previews/` is rendered from the exported files.
+* **Not uploaded to Roblox.** Rojo cannot create MeshParts, and uploading needs your account.
+  Until you import the assets, the game uses the primitive fallback.
 
-## Rebuilding the meshes
+## Rebuilding
 
 ```
-lune run tests/assets.luau                                            # writes asset_specs.json
-blender --background --python scripts/blender/build_assets.py        # or: python3 scripts/blender/build_assets.py (pip bpy 4.2, Python 3.11)
-blender --background --python scripts/blender/verify_exports.py
+python3 scripts/blender/build_assets.py [--only AR,Alpha_Torso] [--size 1024]   # ~3 min/asset on CPU
+python3 scripts/blender/verify_exports.py
+python3 scripts/blender/render_previews.py
+python3 scripts/blender/qc_weapon.py AR /tmp/qc ; python3 scripts/blender/qc_soldier.py /tmp/qc
 ```
-Add `-- --no-render` after the script path (or `--no-render` with python3) to skip the preview
-renders.
+With the Blender app instead of pip `bpy`, run
+`blender --background --python <script> -- <args>`. The old primitive exporter is kept as
+`scripts/blender/legacy_build_assets.py` for reference.
 
 Conventions:
-* **Units:** 1 unit = 1 stud. The AR is 3.88 studs long and the P-11 is 0.88.
-* **Axes:** the files are Y-up with −Z forward, which matches Roblox directly. The weapon pivot is
-  the right-hand grip; the gear pivot is the R6 limb centre.
-* **Objects:** one object per colour key, named `<Model>_<key>`. Magazine parts end in `_mag`,
-  optics in `_optic`, and optional kit pieces in `_v_<variant>`. A tiny `Origin` object marks the
-  pivot. The runtime recolours parts from the spec palette by name, so importer material settings
-  don't matter.
+* **Units:** 1 unit = 1 stud.
+* **Axes:** Y-up with −Z forward, which matches Roblox.
+* **Pivots:** the weapon pivot is the right-hand grip. The gear pivot is the R6 limb centre.
+* **Objects:** each asset exports a few joined, textured meshes that share the atlas:
+  * `<asset>_body`;
+  * `<asset>_mag` (weapons: hidden during reload);
+  * `<asset>_optic` (hidden at full aim);
+  * `<asset>_v_<variant>` for per-player optional kit: goggles, headset, bedroll, visor, mask and
+    antenna;
+  * a tiny `Origin` part that marks the pivot.
+* **Soldier body pieces:** `Torso`, `Arm*` and `Leg*` are complete limbs (uniform, gloves and
+  boots). When they are imported, the runtime makes that R6 limb invisible and keeps it as the
+  hitbox. `Head` is helmet and kit only, so the player's own head and face show.
 
 ## Importing into Roblox Studio (manual, once per asset)
 
-1. Open the place and *Home → Import 3D*. Choose `assets/export/weapons/AR.fbx`.
+1. *Home → Import 3D* and choose `assets/export/weapons/AR.fbx`.
 2. Importer settings:
-   * **File dimensions: Studs**, or whatever unit makes the AR report about 3.9 studs long.
-   * **Merge Meshes OFF**, because the separate objects are needed.
-   * **Anchored OFF**.
-   * **Rig type: None**.
-   * Leave "Keep Hierarchy" on.
-3. The import appears as a Model named `AR` containing MeshParts `AR_body`, `AR_mag_mag`, `Origin`,
-   and so on. Create the folders `ReplicatedStorage.ImportedAssets.Weapons` (ordinary Folders) and
-   move the model in, keeping the name `AR`.
-4. Repeat for CB, LMG, SR and P11.
-5. Do the same for the gear files. Put them in `ReplicatedStorage.ImportedAssets.Gear.Alpha` and
-   `...Gear.Bravo`, named `Head`, `Torso`, `Arm`, `Arm_L`, `Leg` and `Leg_L` (drop the team prefix
-   from the model name).
-6. Optional: select all imported MeshParts and set *CollisionFidelity = Box* and
-   *RenderFidelity = Automatic*. The parts are cosmetic and never collide.
-7. **Save the place.** Rojo leaves `ImportedAssets` alone because the ReplicatedStorage node only
-   maps `Shared`.
+   * **Scale unit: Studs.** The AR should report about 3.8 × 0.8 × 0.2.
+   * **Merge Meshes OFF.**
+   * **Anchored OFF.**
+   * **Rig: None.**
+   * **Import textures ON.** The 3D Importer uploads the embedded Color map as the MeshPart
+     `TextureID`.
+3. For PBR, optionally add a `SurfaceAppearance` to each MeshPart:
+   * `ColorMap`, `RoughnessMap` and `MetalnessMap` come from the PNGs next to the FBX, uploaded via
+     the Asset Manager.
+   * The runtime never recolours a part that has a `TextureID` or `SurfaceAppearance`.
+4. Put the Model in `ReplicatedStorage.ImportedAssets.Weapons` and name it `AR`. Repeat for CB, LMG,
+   SR and P11.
+5. Import the gear files into `ReplicatedStorage.ImportedAssets.Gear.Alpha` and `...Gear.Bravo`.
+   Name them `Head`, `Torso`, `Arm`, `Arm_L`, `Leg` and `Leg_L` (drop the team prefix).
+6. Select all imported MeshParts and set:
+   * *CanCollide/CanQuery/CanTouch off*;
+   * *CollisionFidelity = Box*;
+   * *RenderFidelity = Automatic*.
+7. **Save the place.** Rojo only maps `ReplicatedStorage.Shared`, so it leaves `ImportedAssets`
+   alone.
 
-To check the result, equip a weapon in a play test. The weapon model's attribute `AssetSource`
-reads `imported`, and the character's `Gear` folder attribute `Source` reads `imported` or `mixed`.
-If an import is malformed (no parts, wrong names), Output shows
-`[ModelBuilder] imported asset failed, using primitives` and the game keeps working.
+To check the result in a play test:
+* The weapon model's `AssetSource` attribute reads `imported`.
+* The character's `Gear` folder `Source` attribute reads `imported`, and the blocky R6 limbs
+  disappear behind the new bodies.
+* In first person, the viewmodel uses the imported `Arm` and `Arm_L` meshes.
+* A malformed import logs `[ModelBuilder] imported asset failed, using primitives` and play
+  continues.
 
 ## Animation system
 
@@ -97,7 +125,8 @@ walk to sprint, hip to aim, and stand to crouch all transition continuously. Han
 the weapon's grip and support points. R6 arms are rigid 2-stud limbs, so the harness measures the
 fit:
 * The right hand reaches the grip to within **0.01 studs**.
-* The left hand can land **up to about 1 stud short** of a long rifle's foregrip.
+* The torso is bladed (yawed about 24° for rifles), which brings the support shoulder forward. The
+  left hand now lands within **about 0.73 studs** of the foregrip, down from 1.05.
 
 The empty `src/character/Animate.client.lua` stub stops Roblox inserting its default Animate
 script, which would fight over the joints.
@@ -109,7 +138,7 @@ need to add a clip-playing backend. It isn't implemented; animations are procedu
 
 `Client.Controllers.ViewModel` is active whenever the camera is in first person: always while
 aiming, or when zoomed all the way in. It builds the same `WeaponRig` as the third-person weapon,
-plus faction-coloured sleeve and glove arms, and adds:
+plus the imported faction arm meshes (or sleeve and glove fallback parts), and adds:
 * sway, walk bob and recoil springs;
 * the sprint lower, equip raise and reload tilt with the magazine swap;
 * aim-down-sights, which moves the weapon's `Sight` point onto the camera, hides the optic mesh and

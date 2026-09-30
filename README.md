@@ -65,7 +65,7 @@ src/client  -> StarterPlayerScripts.Client
                    TeamSelectController, ObjectiveMarkers, SoundPlayer
   UI/              Ui helper, Theme
 tests/             luau unit tests + Lune generation harness
-scripts/           check.sh, heightmap/parts preview renderers
+scripts/           check.sh, preview renderers, blender/ (asset modelling library + build)
 docs/              MAP_PIPELINE, STUDIO_VALIDATION, ASSETS, ROADMAP, previews/
 ```
 

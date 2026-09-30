@@ -151,9 +151,11 @@ end
 	BasePart to opts.anchor, keeping its offset from the pivot:
 	  • a part named "Origin" marks the spec origin (exported by Blender) and is
 	    removed; without it the model's pivot is used
-	  • object names follow "<Model>_<colourKey>[_<group>][_v_<variant>]":
-	    colours/materials are re-applied from opts.palette/opts.materials, parts
-	    join groups (mag, optic) and variant parts not in opts.variants are dropped
+	  • object names follow "<Model>_<key>[_<group>][_v_<variant>]" (premium
+	    assets: "<Asset>_body", "<Asset>_mag", "<Asset>_optic", "<Asset>_v_<variant>"):
+	    parts join groups (mag, optic) and variant parts not in opts.variants are
+	    dropped; untextured parts are recoloured from opts.palette/opts.materials,
+	    parts with a TextureID or SurfaceAppearance keep their baked atlas
 ]]
 function ModelBuilder.attachImported(template, opts)
 	local ok, result = pcall(function()
@@ -177,7 +179,9 @@ function ModelBuilder.attachImported(template, opts)
 						stem = stem:sub(1, -(#group + 2))
 					end
 					local colourKey = stem:match("_(%a+)$")
-					if opts.palette and colourKey and opts.palette[colourKey] then
+					-- Baked-atlas meshes keep their own look; only untextured parts are recoloured.
+					local textured = (d:IsA("MeshPart") and d.TextureID ~= "") or d:FindFirstChildOfClass("SurfaceAppearance") ~= nil
+					if not textured and opts.palette and colourKey and opts.palette[colourKey] then
 						local c = opts.palette[colourKey]
 						d.Color = Color3.fromRGB(c[1], c[2], c[3])
 						d.Material = material(opts.materials and opts.materials[colourKey] or "SmoothPlastic")

@@ -46,8 +46,14 @@ others.
 - [ ] **Mobile emulator:** FIRE, AIM, R, SWAP, RUN and CRCH touch buttons all work. AIM, RUN and
       CRCH are toggles.
 - [ ] **Optional imported meshes** (docs/ASSET_PIPELINE.md): after importing, the weapon model's
-      `AssetSource` attribute reads `imported`, and the bevelled meshes appear in both first and
+      `AssetSource` attribute reads `imported`, and the textured meshes appear in both first and
       third person.
+- [ ] **Imported soldiers:** the blocky R6 limbs are hidden (Transparency 1) under the imported
+      bodies, the head and face still show, and variant kit differs between players.
+- [ ] Shots still register on the hidden limbs.
+- [ ] The magazine hides during the reload and the optic hides at full aim.
+- [ ] The first-person arms use the imported sleeves and gloves, and the fists sit on the grip and
+      foregrip. Note any wrist twist here: ______.
 
 ## Milestone 1 — map bake & visuals
 - [ ] **Bake:** Ironfront → Bake Map (Edit mode) completes without errors. Output lists
