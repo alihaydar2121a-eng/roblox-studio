@@ -360,6 +360,9 @@ MATS_GEAR = SPEC["gearMaterials"]
 manifest = {"weapons": {}, "gear": {}, "units": "1 unit = 1 stud", "axes": "Y up, -Z forward (Roblox)"}
 
 for wid, w in SPEC["weapons"].items():
+    if w.get("Premium"):
+        print(f"[weapons] {wid}: premium asset ({w['Premium']}), built by scripts/blender/premium")
+        continue
     reset_scene()
     objs = build_model(wid, w["Parts"], w["Palette"], MATS_WEAPON)
     export(objs, os.path.join(OUT, "weapons", wid))
@@ -371,6 +374,9 @@ for wid, w in SPEC["weapons"].items():
     print(f"[weapons] {wid}: {manifest['weapons'][wid]['triangles']} tris, size {manifest['weapons'][wid]['size_studs']}")
 
 for team, gear in SPEC["gear"].items():
+    if gear.get("Premium"):
+        print(f"[gear] {team}: premium kit ({gear['Premium']}), built by scripts/blender/premium")
+        continue
     for piece, mirror, out_name in (("Head", False, "Head"), ("Torso", False, "Torso"), ("Arm", False, "Arm"), ("Arm", True, "Arm_L"), ("Leg", False, "Leg"), ("Leg", True, "Leg_L")):
         reset_scene()
         objs = build_model(f"{team}_{out_name}", gear[piece], gear["Palette"], MATS_GEAR, mirror=mirror, bevel=0.02)
@@ -392,6 +398,8 @@ if RENDER:
     setup_render(scene, (1000, 1400), 48)
     offset = 0.0
     for wid, w in SPEC["weapons"].items():
+        if w.get("Premium"):
+            continue
         for o in build_model(wid, w["Parts"], w["Palette"], MATS_WEAPON):
             o.location.z += offset
         offset -= 1.7

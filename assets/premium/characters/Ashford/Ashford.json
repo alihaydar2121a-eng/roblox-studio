@@ -1,0 +1,188 @@
+{
+  "name": "Ashford Coalition",
+  "team": "Alpha",
+  "pieces": {
+    "Head": {
+      "fbx": "assets/premium/characters/Ashford/Ashford_Head.fbx",
+      "glb": "assets/premium/characters/Ashford/Ashford_Head.glb",
+      "size_studs_xyz": [
+        1.485,
+        1.289,
+        1.669
+      ],
+      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Head",
+      "objects": {
+        "Ashford_Head_band": 160,
+        "Ashford_Head_camoA_v_cover": 760,
+        "Ashford_Head_helmet": 1760,
+        "Ashford_Head_helmetDark": 1696,
+        "Ashford_Head_helmetDark_v_goggles": 508,
+        "Ashford_Head_helmetDark_v_headset": 724,
+        "Ashford_Head_lens_v_goggles": 108,
+        "Ashford_Head_metal": 152,
+        "Ashford_Head_strap": 624,
+        "Ashford_Head_strap_v_cover": 384,
+        "Ashford_Head_strap_v_goggles": 256
+      },
+      "triangles": 7132,
+      "triangles_base": 4392
+    },
+    "Torso": {
+      "fbx": "assets/premium/characters/Ashford/Ashford_Torso.fbx",
+      "glb": "assets/premium/characters/Ashford/Ashford_Torso.glb",
+      "size_studs_xyz": [
+        2.122,
+        2.761,
+        2.099
+      ],
+      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Torso",
+      "objects": {
+        "Ashford_Torso_band": 528,
+        "Ashford_Torso_camoB": 776,
+        "Ashford_Torso_camoB_v_bedroll": 192,
+        "Ashford_Torso_cloth": 270,
+        "Ashford_Torso_helmetDark": 782,
+        "Ashford_Torso_helmetDark_v_antenna": 104,
+        "Ashford_Torso_metal": 60,
+        "Ashford_Torso_pack": 784,
+        "Ashford_Torso_plate": 952,
+        "Ashford_Torso_pouch": 1472,
+        "Ashford_Torso_strap": 2130,
+        "Ashford_Torso_strap_v_bedroll": 376,
+        "Ashford_Torso_vest": 1272
+      },
+      "triangles": 9698,
+      "triangles_base": 9026
+    },
+    "Arm": {
+      "fbx": "assets/premium/characters/Ashford/Ashford_Arm.fbx",
+      "glb": "assets/premium/characters/Ashford/Ashford_Arm.glb",
+      "size_studs_xyz": [
+        1.168,
+        2.055,
+        1.14
+      ],
+      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm",
+      "objects": {
+        "Ashford_Arm_band": 76,
+        "Ashford_Arm_cloth": 1278,
+        "Ashford_Arm_glove": 234,
+        "Ashford_Arm_knee": 440,
+        "Ashford_Arm_strap": 316
+      },
+      "triangles": 2344,
+      "triangles_base": 2344
+    },
+    "Leg": {
+      "fbx": "assets/premium/characters/Ashford/Ashford_Leg.fbx",
+      "glb": "assets/premium/characters/Ashford/Ashford_Leg.glb",
+      "size_studs_xyz": [
+        1.204,
+        2.035,
+        1.282
+      ],
+      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg",
+      "objects": {
+        "Ashford_Leg_boot": 554,
+        "Ashford_Leg_cloth": 848,
+        "Ashford_Leg_knee": 684,
+        "Ashford_Leg_metal": 332,
+        "Ashford_Leg_sole": 188,
+        "Ashford_Leg_strap": 372
+      },
+      "triangles": 2978,
+      "triangles_base": 2978
+    },
+    "Arm_L": {
+      "fbx": "assets/premium/characters/Ashford/Ashford_Arm_L.fbx",
+      "glb": "assets/premium/characters/Ashford/Ashford_Arm_L.glb",
+      "size_studs_xyz": [
+        1.168,
+        2.055,
+        1.14
+      ],
+      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm_L",
+      "objects": {
+        "Ashford_Arm_L_band": 528,
+        "Ashford_Arm_L_cloth": 1278,
+        "Ashford_Arm_L_glove": 234,
+        "Ashford_Arm_L_knee": 440,
+        "Ashford_Arm_L_strap": 316
+      },
+      "triangles": 2796,
+      "triangles_base": 2796
+    },
+    "Leg_L": {
+      "fbx": "assets/premium/characters/Ashford/Ashford_Leg_L.fbx",
+      "glb": "assets/premium/characters/Ashford/Ashford_Leg_L.glb",
+      "size_studs_xyz": [
+        1.205,
+        2.035,
+        1.282
+      ],
+      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg_L",
+      "objects": {
+        "Ashford_Leg_L_boot": 554,
+        "Ashford_Leg_L_cloth": 848,
+        "Ashford_Leg_L_knee": 684,
+        "Ashford_Leg_L_metal": 332,
+        "Ashford_Leg_L_sole": 188,
+        "Ashford_Leg_L_strap": 372
+      },
+      "triangles": 2978,
+      "triangles_base": 2978
+    }
+  },
+  "textures": {
+    "Head": {
+      "files": {
+        "Color": "assets/premium/characters/Ashford/textures/Ashford_Head_Color.png",
+        "Roughness": "assets/premium/characters/Ashford/textures/Ashford_Head_Roughness.png",
+        "Metalness": "assets/premium/characters/Ashford/textures/Ashford_Head_Metalness.png",
+        "Normal": "assets/premium/characters/Ashford/textures/Ashford_Head_Normal.png"
+      },
+      "usage": 0.483,
+      "overlap": 0.0
+    },
+    "Torso": {
+      "files": {
+        "Color": "assets/premium/characters/Ashford/textures/Ashford_Torso_Color.png",
+        "Roughness": "assets/premium/characters/Ashford/textures/Ashford_Torso_Roughness.png",
+        "Metalness": "assets/premium/characters/Ashford/textures/Ashford_Torso_Metalness.png",
+        "Normal": "assets/premium/characters/Ashford/textures/Ashford_Torso_Normal.png"
+      },
+      "usage": 0.646,
+      "overlap": 0.0
+    },
+    "Arms": {
+      "files": {
+        "Color": "assets/premium/characters/Ashford/textures/Ashford_Arms_Color.png",
+        "Roughness": "assets/premium/characters/Ashford/textures/Ashford_Arms_Roughness.png",
+        "Normal": "assets/premium/characters/Ashford/textures/Ashford_Arms_Normal.png"
+      },
+      "usage": 0.585,
+      "overlap": 0.0
+    },
+    "Legs": {
+      "files": {
+        "Color": "assets/premium/characters/Ashford/textures/Ashford_Legs_Color.png",
+        "Roughness": "assets/premium/characters/Ashford/textures/Ashford_Legs_Roughness.png",
+        "Metalness": "assets/premium/characters/Ashford/textures/Ashford_Legs_Metalness.png",
+        "Normal": "assets/premium/characters/Ashford/textures/Ashford_Legs_Normal.png"
+      },
+      "usage": 0.577,
+      "overlap": 0.0
+    }
+  },
+  "variants": [
+    "cover",
+    "goggles",
+    "headset",
+    "bedroll",
+    "antenna"
+  ],
+  "units": "1 unit = 1 stud",
+  "axes": "Y up, -Z forward (Roblox); pivot = R6 limb centre (object 'Origin')",
+  "triangles_all_variants": 27926,
+  "triangles_base": 24514
+}

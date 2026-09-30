@@ -37,6 +37,8 @@ fi
 if python3 -c "import bpy" >/dev/null 2>&1; then
 	echo "== Blender export verification (re-import FBX/GLB)"
 	python3 scripts/blender/verify_exports.py | tail -1
+	echo "== Premium asset verification (re-import FBX/GLB against the manifests)"
+	python3 scripts/blender/premium/verify_premium.py 2>/dev/null | grep -E "FAIL|failures"
 else
 	echo "== Blender export verification skipped (bpy not installed)"
 fi

@@ -1,5 +1,10 @@
 # Soldiers, weapons & animation — asset pipeline
 
+> **Premium assets:** the IR-7 Carbine (slot `CB`) and the Ashford Coalition kit (team `Alpha`)
+> are now hand-modelled in Blender with baked PBR textures. They have their own build and import
+> steps in [PREMIUM_ASSETS.md](PREMIUM_ASSETS.md). The primitive pipeline below still covers the
+> other weapons and the Varn kit, and it skips anything marked `Premium` in the specs.
+
 ```
 src/shared/Config/WeaponModels.lua ┐   single source of truth (primitive specs)
 src/shared/Config/GearModels.lua   ┘

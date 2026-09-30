@@ -26,31 +26,6 @@
       ],
       "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.AR"
     },
-    "CB": {
-      "name": "KC-9 Talon",
-      "file": "assets/export/weapons/CB.fbx",
-      "objects": [
-        "CB_accent",
-        "CB_body",
-        "CB_dark",
-        "CB_dark_mag",
-        "CB_glass_optic",
-        "CB_mag_mag",
-        "CB_metal",
-        "CB_metal_optic",
-        "CB_rail",
-        "CB_rail_optic",
-        "CB_rubber",
-        "Origin"
-      ],
-      "triangles": 2656,
-      "size_studs": [
-        0.27,
-        1.235,
-        2.935
-      ],
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Weapons.CB"
-    },
     "LMG": {
       "name": "MG-44 Bulwark",
       "file": "assets/export/weapons/LMG.fbx",
@@ -117,96 +92,6 @@
     }
   },
   "gear": {
-    "Alpha_Head": {
-      "file": "assets/export/gear/Alpha_Head.fbx",
-      "objects": [
-        "Alpha_Head_camoA_v_cover",
-        "Alpha_Head_helmet",
-        "Alpha_Head_helmetDark",
-        "Alpha_Head_helmetDark_v_headset",
-        "Alpha_Head_lens_v_goggles",
-        "Alpha_Head_metal",
-        "Alpha_Head_strap",
-        "Alpha_Head_strap_v_goggles",
-        "Origin"
-      ],
-      "triangles": 1704,
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Head"
-    },
-    "Alpha_Torso": {
-      "file": "assets/export/gear/Alpha_Torso.fbx",
-      "objects": [
-        "Alpha_Torso_band",
-        "Alpha_Torso_camoA",
-        "Alpha_Torso_camoB",
-        "Alpha_Torso_camoB_v_bedroll",
-        "Alpha_Torso_metal",
-        "Alpha_Torso_pack",
-        "Alpha_Torso_plate",
-        "Alpha_Torso_pouch",
-        "Alpha_Torso_strap",
-        "Alpha_Torso_vest",
-        "Origin"
-      ],
-      "triangles": 2732,
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Torso"
-    },
-    "Alpha_Arm": {
-      "file": "assets/export/gear/Alpha_Arm.fbx",
-      "objects": [
-        "Alpha_Arm_band",
-        "Alpha_Arm_camoB",
-        "Alpha_Arm_cloth",
-        "Alpha_Arm_glove",
-        "Alpha_Arm_helmetDark",
-        "Origin"
-      ],
-      "triangles": 648,
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm"
-    },
-    "Alpha_Arm_L": {
-      "file": "assets/export/gear/Alpha_Arm_L.fbx",
-      "objects": [
-        "Alpha_Arm_L_band",
-        "Alpha_Arm_L_camoB",
-        "Alpha_Arm_L_cloth",
-        "Alpha_Arm_L_glove",
-        "Alpha_Arm_L_helmetDark",
-        "Origin"
-      ],
-      "triangles": 648,
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Arm_L"
-    },
-    "Alpha_Leg": {
-      "file": "assets/export/gear/Alpha_Leg.fbx",
-      "objects": [
-        "Alpha_Leg_boot",
-        "Alpha_Leg_camoA",
-        "Alpha_Leg_camoB",
-        "Alpha_Leg_knee",
-        "Alpha_Leg_pouch",
-        "Alpha_Leg_sole",
-        "Alpha_Leg_strap",
-        "Origin"
-      ],
-      "triangles": 864,
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg"
-    },
-    "Alpha_Leg_L": {
-      "file": "assets/export/gear/Alpha_Leg_L.fbx",
-      "objects": [
-        "Alpha_Leg_L_boot",
-        "Alpha_Leg_L_camoA",
-        "Alpha_Leg_L_camoB",
-        "Alpha_Leg_L_knee",
-        "Alpha_Leg_L_pouch",
-        "Alpha_Leg_L_sole",
-        "Alpha_Leg_L_strap",
-        "Origin"
-      ],
-      "triangles": 864,
-      "roblox_path": "ReplicatedStorage.ImportedAssets.Gear.Alpha.Leg_L"
-    },
     "Bravo_Head": {
       "file": "assets/export/gear/Bravo_Head.fbx",
       "objects": [

@@ -6,7 +6,9 @@
 	  • same WeaponRig as the replicated third-person weapon (imported mesh or
 	    primitive fallback), so first and third person always match
 	  • R6-style sleeved + gloved arms in the player's faction colours whose
-	    hands track the grip and support points
+	    hands track the grip and support points; when the faction's premium
+	    arm meshes are imported (ImportedAssets.Gear.<Team>.Arm / Arm_L) the
+	    visible forearm, cuff and glove are those meshes
 	  • sway (camera turn lag), walk bob, recoil spring, sprint lower, equip
 	    raise, reload tilt with magazine swap
 	  • aim-down-sights: the weapon's Sight point is blended onto the camera;
@@ -22,6 +24,7 @@ local Shared = ReplicatedStorage:WaitForChild("Shared")
 local WeaponConfig = require(Shared.Config.WeaponConfig)
 local GearModels = require(Shared.Config.GearModels)
 local WeaponRig = require(Shared.Assets.WeaponRig)
+local ModelBuilder = require(Shared.Assets.ModelBuilder)
 local PoseLibrary = require(Shared.Animation.PoseLibrary)
 
 local ViewModel = {}
@@ -37,6 +40,11 @@ local HIP = {
 	Pistol = CFrame.new(0.42, -0.52, -1.35),
 }
 local SHOULDERS = { Right = Vector3.new(0.95, -1.5, 0.55), Left = Vector3.new(-0.95, -1.5, 0.55) }
+-- Viewmodel arms are drawn at half R6 size; the premium arm's hand point is
+-- near the bottom of its glove (R6 arm-local y = -0.9).
+local ARM_SCALE = 0.5
+local ARM_HAND_Y = -0.9
+local ARM_TOP = (1 - ARM_HAND_Y) * ARM_SCALE -- hand point to the top of the imported sleeve
 
 local function rgb(t)
 	return Color3.fromRGB(t[1], t[2], t[3])
@@ -120,6 +128,61 @@ local function armPart(folder, color, material, name)
 	return p
 end
 
+-- Imported premium arm (Gear.<Team>.Arm / Arm_L), anchored and moved each frame.
+local function premiumArm(folder, teamId, kit, side)
+	local template = ModelBuilder.findImported("Gear", teamId, side == "Right" and "Arm" or "Arm_L")
+	if not template then
+		return nil
+	end
+	local anchor = Instance.new("Part")
+	anchor.Anchored = true
+	anchor.Transparency = 1
+	anchor.Size = Vector3.new(1, 2, 1)
+	anchor.CFrame = CFrame.new()
+	local built = ModelBuilder.attachImported(template, {
+		anchor = anchor, parent = folder, palette = kit.Palette, materials = GearModels.Materials, variants = {},
+	})
+	anchor:Destroy()
+	if not built then
+		return nil
+	end
+	local parts, offsets = {}, {}
+	for _, part in ipairs(built.parts) do
+		local w = part:FindFirstChild("ImportWeld")
+		local c0 = w and w.C0 or CFrame.new()
+		if w then
+			w:Destroy()
+		end
+		part.Anchored = true
+		part.CastShadow = false
+		part.Size *= ARM_SCALE
+		table.insert(parts, part)
+		table.insert(offsets, CFrame.new(c0.Position * ARM_SCALE) * c0.Rotation)
+	end
+	return { parts = parts, offsets = offsets }
+end
+
+local function placePremiumArm(arm, shoulder, hand)
+	local dir = hand - shoulder
+	local len = dir.Magnitude
+	if len < 0.05 then
+		return
+	end
+	-- arm-local -Y runs from the shoulder to the hand (as in the R6 aiming pose)
+	local rotation = CFrame.lookAt(shoulder, hand).Rotation * CFrame.Angles(math.pi / 2, 0, 0)
+	local armCf = CFrame.new(hand) * rotation * CFrame.new(0, -ARM_HAND_Y * ARM_SCALE, 0)
+	local frames = table.create(#arm.premium.offsets)
+	for i, o in ipairs(arm.premium.offsets) do
+		frames[i] = armCf * o
+	end
+	workspace:BulkMoveTo(arm.premium.parts, frames, Enum.BulkMoveMode.FireCFrameChanged)
+	-- the plain sleeve bridges from the (off-screen) shoulder to the imported sleeve
+	local frame = CFrame.lookAt(shoulder, hand)
+	local sleeveLen = math.max(0.1, len - ARM_TOP + 0.05)
+	arm.sleeve.Size = Vector3.new(0.52, 0.52, sleeveLen)
+	arm.sleeve.CFrame = frame * CFrame.new(0, 0, -sleeveLen / 2)
+end
+
 function ViewModel.destroy()
 	if current then
 		current.folder:Destroy()
@@ -161,11 +224,19 @@ function ViewModel.equip(weaponId)
 	local kit = GearModels[teamId] or GearModels.Alpha
 	local arms = {}
 	for _, side in ipairs({ "Right", "Left" }) do
+		local ok, premium = pcall(premiumArm, folder, teamId, kit, side)
+		if not ok then
+			warn("[ViewModel] premium arm failed, using primitives: " .. tostring(premium))
+			premium = nil
+		end
 		arms[side] = {
 			sleeve = armPart(folder, rgb(kit.Uniform.Arms), Enum.Material.Fabric, side .. "Sleeve"),
-			cuff = armPart(folder, rgb(kit.Palette.cloth), Enum.Material.Fabric, side .. "Cuff"),
-			glove = armPart(folder, rgb(kit.Palette.glove), Enum.Material.Fabric, side .. "Glove"),
+			premium = premium,
 		}
+		if not premium then
+			arms[side].cuff = armPart(folder, rgb(kit.Palette.cloth), Enum.Material.Fabric, side .. "Cuff")
+			arms[side].glove = armPart(folder, rgb(kit.Palette.glove), Enum.Material.Fabric, side .. "Glove")
+		end
 	end
 	folder.Parent = camera
 	current = {
@@ -310,8 +381,14 @@ function ViewModel.update(dt, s)
 	if s.reload then
 		support = PoseLibrary.reloadHand(weaponCf, current.magLocal, v3(spec.Points.Support), s.reload, cam * Vector3.new(-0.5, -1.4, -0.9))
 	end
-	placeArm(current.arms.Right, cam * SHOULDERS.Right, grip)
-	placeArm(current.arms.Left, cam * SHOULDERS.Left, support)
+	for side, hand in pairs({ Right = grip, Left = support }) do
+		local arm = current.arms[side]
+		if arm.premium then
+			placePremiumArm(arm, cam * SHOULDERS[side], hand)
+		else
+			placeArm(arm, cam * SHOULDERS[side], hand)
+		end
+	end
 end
 
 return ViewModel

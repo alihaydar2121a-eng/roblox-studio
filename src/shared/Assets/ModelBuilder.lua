@@ -145,6 +145,16 @@ function ModelBuilder.findImported(...)
 	return nil
 end
 
+-- Premium assets carry baked PBR textures (SurfaceAppearance, or a legacy
+-- TextureID); those keep their imported look instead of the flat palette.
+local function isTextured(part)
+	if part:FindFirstChildOfClass("SurfaceAppearance") then
+		return true
+	end
+	return part:IsA("MeshPart") and part.TextureID ~= ""
+end
+ModelBuilder.isTextured = isTextured
+
 --[[
 	attachImported(template, opts) -> result like build(), or nil on failure.
 	Clones an imported model (from the Blender pipeline) and welds every
@@ -152,8 +162,9 @@ end
 	  • a part named "Origin" marks the spec origin (exported by Blender) and is
 	    removed; without it the model's pivot is used
 	  • object names follow "<Model>_<colourKey>[_<group>][_v_<variant>]":
-	    colours/materials are re-applied from opts.palette/opts.materials, parts
-	    join groups (mag, optic) and variant parts not in opts.variants are dropped
+	    colours/materials are re-applied from opts.palette/opts.materials (except
+	    on textured parts), parts join groups (mag, optic) and variant parts not
+	    in opts.variants are dropped
 ]]
 function ModelBuilder.attachImported(template, opts)
 	local ok, result = pcall(function()
@@ -177,7 +188,7 @@ function ModelBuilder.attachImported(template, opts)
 						stem = stem:sub(1, -(#group + 2))
 					end
 					local colourKey = stem:match("_(%a+)$")
-					if opts.palette and colourKey and opts.palette[colourKey] then
+					if opts.palette and colourKey and opts.palette[colourKey] and not isTextured(d) then
 						local c = opts.palette[colourKey]
 						d.Color = Color3.fromRGB(c[1], c[2], c[3])
 						d.Material = material(opts.materials and opts.materials[colourKey] or "SmoothPlastic")

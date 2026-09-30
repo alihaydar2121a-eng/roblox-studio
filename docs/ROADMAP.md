@@ -25,7 +25,7 @@ Bug fixes:
 * The old flat baseplate map and single-sphere trees have been replaced.
 
 ## Milestone 2 — weapons & soldiers ✅ (implemented; Studio validation pending)
-* Five original weapons (KR-20 rifle, KC-9 carbine, MG-44 support weapon, SR-3 scout rifle, P-11
+* Five original weapons (KR-20 rifle, IR-7 carbine, MG-44 support weapon, SR-3 scout rifle, P-11
   sidearm):
   * one set of shared specs drives both the Blender FBX/GLB meshes and the in-game primitive
     fallback;
@@ -40,6 +40,16 @@ Bug fixes:
 * Sprint and crouch stances with server-authoritative speeds, and movement-dependent spread.
 * See docs/ASSET_PIPELINE.md for the Blender → Studio import steps.
 
+
+## Premium art pass 🟡 (first assets in review)
+Hand-modelled Blender assets with baked PBR atlases, see [PREMIUM_ASSETS.md](PREMIUM_ASSETS.md).
+* ✅ **IR-7 Carbine** (replaces the carbine slot) and the ✅ **Ashford Coalition** soldier kit.
+  Both have FBX/GLB/.blend exports, 1024² atlases, review renders, a Studio installer and harness
+  checks.
+* ⏳ These follow the same art direction once the two above are approved:
+  * the **AR-12 Infantry Rifle**, **SG-4 Support Weapon**, **SR-9 Scout Rifle** and **PX-6
+    Sidearm**;
+  * the **Varn Directorate** kit (charcoal/navy uniform, original helmet, blue accents).
 ## Milestone 3 — SFX & VFX (next)
 Pooled audio system (spatial, surface footsteps, ambience zones, mixing through SoundGroups) and
 pooled VFX: muzzle flash, tracers, surface-aware impacts, dust and mist, explosions. Quality scaling

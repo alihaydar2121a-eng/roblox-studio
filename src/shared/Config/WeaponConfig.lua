@@ -30,7 +30,7 @@ WeaponConfig.Weapons = {
 		AimFov = 52,
 	}),
 	CB = weapon({
-		Id = "CB", DisplayName = "KC-9 Talon", Class = "Carbine", Slot = "Primary", Pose = "Rifle",
+		Id = "CB", DisplayName = "IR-7 Carbine", Class = "Carbine", Slot = "Primary", Pose = "Rifle",
 		Damage = 23, MinDamage = 15, HeadMultiplier = 1.5, FalloffStart = 90, FalloffEnd = 320, Range = 800,
 		RPM = 760, Automatic = true, MagSize = 30, ReserveAmmo = 180, ReloadTime = 2.0,
 		HipSpreadDegrees = 1.0, SpreadPerShot = 0.2, MaxSpreadDegrees = 3.0, RecoilKickDegrees = 0.45, RecoilYawDegrees = 0.22,

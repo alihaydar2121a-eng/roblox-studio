@@ -7,7 +7,8 @@
 local roblox = require("@lune/roblox")
 local fs = require("@lune/fs")
 local process = require("@lune/process")
-local Instance, Vector3, CFrame = roblox.Instance, roblox.Vector3, roblox.CFrame
+local serde = require("@lune/serde")
+local Instance, Vector3, CFrame, Color3 = roblox.Instance, roblox.Vector3, roblox.CFrame, roblox.Color3
 
 local Loader = require("./lib/RobloxEnv")()
 local shared = Loader.service("ReplicatedStorage").Shared
@@ -17,6 +18,7 @@ local WeaponModels = Loader.require(shared.Config.WeaponModels)
 local WeaponConfig = Loader.require(shared.Config.WeaponConfig)
 local GearModels = Loader.require(shared.Config.GearModels)
 local PoseLibrary = Loader.require(shared.Animation.PoseLibrary)
+local PremiumAssets = Loader.require(shared.Config.PremiumAssets)
 
 local failures = {}
 local function check(cond, msg)
@@ -128,6 +130,116 @@ do
 			end
 		end
 		print("  pivot, recolour, groups and variants OK")
+	end
+end
+
+-- Textured (premium) imports keep their baked look instead of the palette.
+do
+	local template = Instance.new("Model")
+	template.Name = "CB"
+	local origin = Instance.new("MeshPart")
+	origin.Name = "Origin"
+	origin.CFrame = CFrame.new(1, 1, 1)
+	origin.Parent = template
+	local textured = Instance.new("MeshPart")
+	textured.Name = "IR7_accent"
+	textured.Color = Color3.fromRGB(10, 20, 30)
+	textured.CFrame = CFrame.new(1, 1.4, 0)
+	textured.Parent = template
+	Instance.new("SurfaceAppearance").Parent = textured
+	local plain = Instance.new("MeshPart")
+	plain.Name = "IR7_receiver"
+	plain.CFrame = CFrame.new(1, 1.4, 0.8)
+	plain.Parent = template
+	local anchor = Instance.new("Part")
+	local spec = WeaponModels.get("CB")
+	local result = ModelBuilder.attachImported(template, { anchor = anchor, parent = Instance.new("Folder"), palette = spec.Palette, materials = WeaponModels.Materials })
+	check(result ~= nil and #result.parts == 2, "textured import failed")
+	if result then
+		for _, part in ipairs(result.parts) do
+			if part.Name == "IR7_accent" then
+				check(math.abs(part.Color.R * 255 - 10) < 1, "textured part was recoloured")
+			else
+				check(math.abs(part.Color.R * 255 - spec.Palette.receiver[1]) < 1, "untextured premium part not recoloured")
+			end
+		end
+		print("  textured parts keep SurfaceAppearance look, plain parts use the palette")
+	end
+end
+
+--------------------------------------------------------------- premium assets
+print("== Premium assets (Blender manifest vs runtime spec)")
+for _, id in ipairs(WeaponModels.Ids) do
+	local spec = WeaponModels.get(id)
+	if spec.Premium then
+		local ok, raw = pcall(fs.readFile, spec.Premium)
+		check(ok, id .. " premium manifest missing: " .. spec.Premium)
+		if ok then
+			local manifest = serde.decode("json", raw)
+			for name, p in pairs(manifest.points_roblox) do
+				local q = spec.Points[name]
+				check(q ~= nil, ("%s point %s missing from WeaponModels"):format(id, name))
+				if q then
+					for i = 1, 3 do
+						check(math.abs(p[i] - q[i]) < 1e-3, ("%s point %s differs from the Blender model"):format(id, name))
+					end
+				end
+			end
+			local entry = PremiumAssets.find(manifest.model)
+			check(entry ~= nil, id .. " has no PremiumAssets entry")
+			if entry then
+				check(table.concat(entry.Path, ".") == "Weapons." .. id, id .. " PremiumAssets path mismatch")
+				for i = 1, 3 do
+					check(math.abs(entry.Size[i] - manifest.size_studs_xyz[i]) < 0.01, id .. " PremiumAssets size mismatch")
+				end
+				local listed = {}
+				for _, n in ipairs(entry.Parts) do
+					listed[n] = true
+				end
+				for n in pairs(manifest.objects) do
+					check(listed[n], ("%s object %s not listed in PremiumAssets"):format(id, n))
+				end
+			end
+			local length = manifest.size_studs_xyz[3]
+			check(manifest.triangles < 60000, id .. " premium mesh over budget")
+			print(("  %-4s %-14s %d tris, %.2f studs, %d objects, points match"):format(id, manifest.name, manifest.triangles, length, entry and #entry.Parts or 0))
+		end
+	end
+end
+
+for _, teamId in ipairs({ "Alpha", "Bravo" }) do
+	local kit = GearModels[teamId]
+	if kit.Premium then
+		local ok, raw = pcall(fs.readFile, kit.Premium)
+		check(ok, teamId .. " premium kit manifest missing: " .. kit.Premium)
+		if ok then
+			local manifest = serde.decode("json", raw)
+			local pieces = 0
+			for piece, info in pairs(manifest.pieces) do
+				pieces += 1
+				local modelName = info.fbx:match("([^/]+)%.fbx$")
+				local entry = PremiumAssets.find(modelName)
+				check(entry ~= nil, modelName .. " has no PremiumAssets entry")
+				if entry then
+					check(table.concat(entry.Path, ".") == "Gear." .. teamId .. "." .. piece, modelName .. " PremiumAssets path mismatch")
+					for i = 1, 3 do
+						check(math.abs(entry.Size[i] - info.size_studs_xyz[i]) < 0.01, modelName .. " PremiumAssets size mismatch")
+					end
+					local listed = {}
+					for _, n in ipairs(entry.Parts) do
+						listed[n] = true
+					end
+					for n in pairs(info.objects) do
+						check(listed[n], ("%s object %s not listed in PremiumAssets"):format(modelName, n))
+						local variant = n:match("_v_(%w+)$")
+						check(variant == nil or GearModels.Variants[variant] ~= nil, n .. " uses an unknown variant")
+					end
+				end
+			end
+			check(pieces == 6, teamId .. " premium kit must have 6 pieces")
+			print(("  %-5s %s: %d pieces, %d tris base, %d with all variants"):format(teamId, manifest.name, pieces,
+				manifest.triangles_base, manifest.triangles_all_variants))
+		end
 	end
 end
 
@@ -257,15 +369,14 @@ for _, stance in ipairs({ "Stand", "Sprint", "Crouch" }) do
 end
 
 -- Export weapon + gear specs for the Blender asset build.
-local serde = require("@lune/serde")
 local export = { weapons = {}, gear = {}, weaponMaterials = WeaponModels.Materials, gearMaterials = GearModels.Materials }
 for _, id in ipairs(WeaponModels.Ids) do
 	local spec = WeaponModels.get(id)
-	export.weapons[id] = { Parts = spec.Parts, Palette = spec.Palette, Points = spec.Points, Name = WeaponConfig.get(id).DisplayName }
+	export.weapons[id] = { Parts = spec.Parts, Palette = spec.Palette, Points = spec.Points, Name = WeaponConfig.get(id).DisplayName, Premium = spec.Premium }
 end
 for _, teamId in ipairs({ "Alpha", "Bravo" }) do
 	local kit = GearModels[teamId]
-	export.gear[teamId] = { Head = kit.Head, Torso = kit.Torso, Arm = kit.Arm, Leg = kit.Leg, Palette = kit.Palette, Uniform = kit.Uniform }
+	export.gear[teamId] = { Head = kit.Head, Torso = kit.Torso, Arm = kit.Arm, Leg = kit.Leg, Palette = kit.Palette, Uniform = kit.Uniform, Premium = kit.Premium }
 end
 fs.writeDir("assets/specs")
 fs.writeFile("assets/specs/asset_specs.json", serde.encode("json", export, true))

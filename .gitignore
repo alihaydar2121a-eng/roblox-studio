@@ -4,3 +4,5 @@
 *.rbxlx.lock
 build/
 /tools/
+__pycache__/
+*.blend1
